@@ -290,7 +290,7 @@
   </header>
 
   <div class="nextup">
-    <h2>Nästa upp</h2>
+    <h2>Kommande</h2>
     <div class="ribbon" id="ribbon"></div>
   </div>
 
@@ -386,7 +386,7 @@
     <div class="field">
       <label style="display:flex;align-items:center;gap:8px;">
         <input type="checkbox" id="cat-exclude-nextup" style="width:auto;">
-        Visa inte poster härifrån i "Nästa upp"
+        Visa inte poster härifrån i "Kommande"
       </label>
     </div>
     <div class="modal-actions" id="catModalActions">
@@ -1315,7 +1315,7 @@ function renderBoard(){
     function buildCatTile(cat){
       const items = state.items.filter(i=>i.category===cat.id);
       const overdue = items.filter(i=>i.dueDate && !i.completed && isOverdue(i.dueDate)).length;
-      let sub = items.length + ' post' + (items.length===1?'':'er');
+      let sub = String(items.length);
       if(overdue>0) sub += ' · ' + overdue + ' försenad' + (overdue===1?'':'e');
 
       const wrap = document.createElement('div');
@@ -1366,7 +1366,7 @@ function renderBoard(){
       heading.style.fontSize = '13px';
       heading.style.color = 'var(--ink-muted)';
       heading.style.margin = '22px 2px 8px';
-      heading.textContent = 'Fristående (visas ej i Nästa upp)';
+      heading.textContent = 'Fristående (visas ej i Kommande)';
       frag.appendChild(heading);
 
       const sepGrid = document.createElement('div');
@@ -1433,7 +1433,7 @@ function renderBoard(){
     subcats.forEach(subcat=>{
       const subItems = state.items.filter(i=>i.category===activeCategory && i.subcategoryId===subcat.id);
       const overdue = subItems.filter(i=>i.dueDate && !i.completed && isOverdue(i.dueDate)).length;
-      let subText = subItems.length + ' post' + (subItems.length===1?'':'er');
+      let subText = String(subItems.length);
       if(overdue>0) subText += ' · ' + overdue + ' försenad' + (overdue===1?'':'e');
 
       const wrap = document.createElement('div');
