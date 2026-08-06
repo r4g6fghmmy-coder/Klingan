@@ -1,0 +1,1831 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<title>Husets Almanacka</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Almanackan">
+<meta name="theme-color" content="#F3F5FC">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAADnklEQVR4nO3cP07bcBzG4W8iegwWRqSKK3Rh6N6hF0HqEXoUhu4duvQKVSVGFsQJGDukU1CA/LFjO7ZfnmdDoo6Hj97+EissakTnlxerMV+f4Tzc3S/GeN2Tvah4OUXkg76AiNllqLgHuaiQaarvsHu9mJA5Vl9h93KR2+urVVXVzeNTH5fjHesa9rLrDaxjhj50/V++U9BiZghdoj475h8JmaGto257BGm90GLmlNqudaugxcwY2kTdOGgxM6amUTcKWsxMQZOoDwYtZqbkUNSdP4eGKdkbtHVmivat9M6gxcyU7Yp6a9BiZg62Re0MTZQ3QVtn5uT1SltoorwI2jozR5srbaGJ8hy0dWbO1ittoYkiaKIsqxw3yHB+ebGy0EQRNFEETRRBE2XpDSFJLDRRBE0UQRNF0EQRNFEETRRBE0XQRBE0UQRNFEETRdBEETRRBE0UQRNF0EQRNFEETRRBE0XQRBE0UQRNFEETRdBEETRRBE2Us7Fv4Fg/vn0Y+xYm68v3f2PfwmgsNFEETRRBE0XQRBE0UQRNFEETRdBEETRRBE2U2T76fs+Pd9nNQhNF0EQRNFEETRRBE0XQRBE0UQRNFEETRdBEETRRBE0UQRNF0EQRNFEETRRBE0XQRBE0UQRNlNl+Sdbfh97tPX+B2EITRdBEETRRBE0UQRNF0EQRNFEETRRBE0XQRJnto+/3/HiX3Sw0UQRNFEETRdBEETRRBE0UQRNF0EQRNFEETRRBE0XQRBE0UQRNFEETRdBEETRRBE0UQRNF0ESZ7Zdk//7+OfYtHO3jp89j30IsC00UQRNF0EQRNFEETRRBE0XQRBE0UQRNFEETZbaPvj0+ZhsLTRRBE0XQRBE0UQRNFEETRdBEETRRBE0UQRNF0EQRNFEETRRBE0XQRBE0UZZff/1ZjH0T0BcLTRRBE0XQRBE0UZZVVd4YkuDh7n5hoYkiaKI8B+3YwZw93N0vqiw0YV4EbaWZo/U6V1lowrwJ2kozJ5vrXGWhCbM1aCvNHLxe56o9Cy1qpmxbzFUHjhyiZop2xVzlDE2Yg0FbaaZk3zpXNVxoUTMFh2KuanHkEDVjahJzVcsztKgZQ9OYq454UyhqTqlNzFVVneK8vb5abf588/jU5XLwrG3Ia50+trPWDOHYmKt6+Bxa1PSpS8xVHY8cr51fXqwO/xa81TXktUHWVdg01VfIa4MeF4TNLn2HvHay86+4GSriTf8B1o666zNj2BwAAAAASUVORK5CYII=">
+<link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAADnklEQVR4nO3cP07bcBzG4W8iegwWRqSKK3Rh6N6hF0HqEXoUhu4duvQKVSVGFsQJGDukU1CA/LFjO7ZfnmdDoo6Hj97+EissakTnlxerMV+f4Tzc3S/GeN2Tvah4OUXkg76AiNllqLgHuaiQaarvsHu9mJA5Vl9h93KR2+urVVXVzeNTH5fjHesa9rLrDaxjhj50/V++U9BiZghdoj475h8JmaGto257BGm90GLmlNqudaugxcwY2kTdOGgxM6amUTcKWsxMQZOoDwYtZqbkUNSdP4eGKdkbtHVmivat9M6gxcyU7Yp6a9BiZg62Re0MTZQ3QVtn5uT1SltoorwI2jozR5srbaGJ8hy0dWbO1ittoYkiaKIsqxw3yHB+ebGy0EQRNFEETRRBE2XpDSFJLDRRBE0UQRNF0EQRNFEETRRBE0XQRBE0UQRNFEETRdBEETRRBE0UQRNF0EQRNFEETRRBE0XQRBE0UQRNFEETRdBEETRRBE2Us7Fv4Fg/vn0Y+xYm68v3f2PfwmgsNFEETRRBE0XQRBE0UQRNFEETRdBEETRRBE2U2T76fs+Pd9nNQhNF0EQRNFEETRRBE0XQRBE0UQRNFEETRdBEETRRBE0UQRNF0EQRNFEETRRBE0XQRBE0UQRNlNl+Sdbfh97tPX+B2EITRdBEETRRBE0UQRNF0EQRNFEETRRBE0XQRJnto+/3/HiX3Sw0UQRNFEETRdBEETRRBE0UQRNF0EQRNFEETRRBE0XQRBE0UQRNFEETRdBEETRRBE0UQRNF0ESZ7Zdk//7+OfYtHO3jp89j30IsC00UQRNF0EQRNFEETRRBE0XQRBE0UQRNFEETZbaPvj0+ZhsLTRRBE0XQRBE0UQRNFEETRdBEETRRBE0UQRNF0EQRNFEETRRBE0XQRBE0UZZff/1ZjH0T0BcLTRRBE0XQRBE0UZZVVd4YkuDh7n5hoYkiaKI8B+3YwZw93N0vqiw0YV4EbaWZo/U6V1lowrwJ2kozJ5vrXGWhCbM1aCvNHLxe56o9Cy1qpmxbzFUHjhyiZop2xVzlDE2Yg0FbaaZk3zpXNVxoUTMFh2KuanHkEDVjahJzVcsztKgZQ9OYq454UyhqTqlNzFVVneK8vb5abf588/jU5XLwrG3Ia50+trPWDOHYmKt6+Bxa1PSpS8xVHY8cr51fXqwO/xa81TXktUHWVdg01VfIa4MeF4TNLn2HvHay86+4GSriTf8B1o666zNj2BwAAAAASUVORK5CYII=">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #F3F5FC;
+    --surface: #FFFFFF;
+    --surface-soft: #ECEFFA;
+    --border: #E3E7F5;
+    --ink: #3E3E5C;
+    --ink-muted: #9395B3;
+    --coral: #FF9E9E;
+    --coral-deep: #F17F86;
+    --amber: #FFD37E;
+    --amber-deep: #F0B84D;
+    --shadow: 0 4px 16px rgba(89,92,150,0.10);
+    --shadow-sm: 0 2px 8px rgba(89,92,150,0.08);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family:'Nunito',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:900px;margin:0 auto;padding:calc(24px + env(safe-area-inset-top)) 18px 110px;}
+  header.top{
+    display:flex;justify-content:space-between;align-items:flex-start;
+    margin-bottom:22px;
+  }
+  h1{
+    font-family:'Baloo 2',sans-serif;font-weight:700;font-size:26px;margin:0;
+    letter-spacing:0.2px;color:var(--ink);
+  }
+  .date-line{
+    font-family:'Nunito',sans-serif;font-weight:600;color:var(--ink-muted);
+    font-size:12.5px;margin-top:4px;text-transform:capitalize;
+  }
+  .toolbar{display:flex;gap:8px;align-items:center;}
+  .add-btn{
+    background:var(--coral);color:#FFFFFF;border:none;border-radius:14px;
+    padding:10px 18px;font-family:'Nunito',sans-serif;font-weight:700;font-size:14px;
+    cursor:pointer;transition:transform 0.12s, box-shadow 0.12s;box-shadow:var(--shadow-sm);
+  }
+  .add-btn:hover{transform:translateY(-1px);box-shadow:var(--shadow);}
+  .add-btn:active{transform:translateY(0);}
+
+  .fab{
+    position:fixed;right:22px;bottom:26px;width:58px;height:58px;border-radius:50%;
+    background:var(--coral);color:#fff;border:none;font-size:26px;font-weight:700;
+    cursor:pointer;box-shadow:0 8px 20px rgba(255,158,158,0.55);
+    display:flex;align-items:center;justify-content:center;z-index:40;
+    transition:transform 0.15s;
+  }
+  .fab:hover{transform:scale(1.06);}
+  .fab:active{transform:scale(0.96);}
+
+  .nextup{margin-bottom:26px;}
+  .nextup h2{
+    font-family:'Baloo 2',sans-serif;font-size:13px;font-weight:700;
+    text-transform:uppercase;letter-spacing:1.2px;color:var(--ink-muted);
+    margin:0 0 10px 4px;
+  }
+  .ribbon{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 8px;}
+  .ribbon-card{
+    flex:0 0 auto;min-width:170px;background:var(--surface);
+    border-radius:16px;box-shadow:var(--shadow-sm);
+    padding:12px 14px;border-top:4px solid var(--amber);
+    cursor:pointer;transition:transform 0.1s;
+  }
+  .ribbon-card:active{transform:scale(0.97);}
+  .ribbon-card .rc-name{font-weight:700;font-size:14px;color:var(--ink);}
+  .ribbon-card .rc-due{font-family:'Nunito',sans-serif;font-weight:600;font-size:11.5px;color:var(--ink-muted);margin-top:4px;}
+  .ribbon-card.overdue .rc-due{color:var(--coral-deep);}
+  .empty-ribbon{color:var(--ink-muted);font-size:13px;}
+
+  .cat-buttons{display:flex;flex-direction:column;gap:12px;}
+  .cat-button{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:22px 56px 22px 20px;border-radius:20px;border:none;cursor:pointer;
+    text-align:left;color:var(--ink);font-family:'Nunito',sans-serif;
+    box-shadow:var(--shadow-sm);
+    transition:transform 0.12s, box-shadow 0.12s;
+  }
+  .cat-button:hover{transform:translateY(-2px);box-shadow:var(--shadow);}
+  .cat-button:active{transform:translateY(0);}
+  .cat-button .cb-name{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:19px;}
+  .cat-button .cb-sub{font-family:'Nunito',sans-serif;font-weight:600;font-size:12px;opacity:0.7;margin-top:3px;}
+  .cat-button .cb-arrow{font-size:20px;opacity:0.6;position:absolute;right:20px;bottom:16px;}
+
+  .cat-detail-head{
+    display:flex;align-items:center;gap:12px;margin-bottom:18px;
+  }
+  .back-btn{
+    background:var(--surface);border:none;color:var(--ink);
+    border-radius:50%;width:38px;height:38px;cursor:pointer;font-size:16px;
+    display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-sm);
+  }
+  .back-btn:hover{box-shadow:var(--shadow);}
+  .cat-detail-title{
+    font-family:'Baloo 2',sans-serif;font-weight:700;font-size:19px;
+    padding:8px 18px;border-radius:14px;
+  }
+  .swatch-grid{display:flex;flex-wrap:wrap;gap:10px;margin-top:2px;}
+  .swatch{
+    width:36px;height:36px;border-radius:50%;cursor:pointer;
+    border:2px solid transparent;position:relative;
+  }
+  .swatch.selected{border-color:var(--ink);}
+  .swatch.selected::after{
+    content:'✓';position:absolute;inset:0;display:flex;
+    align-items:center;justify-content:center;color:var(--ink);font-size:15px;font-weight:700;
+  }
+  .cat-button-wrap{position:relative;}
+  .cat-edit-btn{
+    position:absolute;top:14px;right:16px;background:rgba(255,255,255,0.55);
+    border:none;color:var(--ink);border-radius:50%;width:28px;height:28px;
+    cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;
+  }
+  .cat-edit-btn:hover{background:rgba(255,255,255,0.85);}
+  .add-cat-button{
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    padding:18px;border-radius:20px;border:2px dashed var(--border);
+    cursor:pointer;color:var(--ink-muted);font-size:14px;font-weight:700;background:none;
+    font-family:'Nunito',sans-serif;
+  }
+  .add-cat-button:hover{border-color:var(--ink-muted);color:var(--ink);}
+  .delete-cat-btn{
+    background:none;border:none;color:var(--coral-deep);font-weight:700;
+    border-radius:12px;padding:9px 12px;font-size:13px;cursor:pointer;margin-right:auto;
+  }
+
+  .item{
+    background:var(--surface);border-left:5px solid;
+    border-radius:16px;margin-bottom:10px;padding:14px 16px;
+    display:flex;flex-direction:column;gap:6px;box-shadow:var(--shadow-sm);
+  }
+  .item-compact{
+    background:var(--surface);border-left:5px solid;
+    border-radius:14px;margin-bottom:8px;padding:13px 16px;
+    display:flex;justify-content:space-between;align-items:center;gap:10px;
+    box-shadow:var(--shadow-sm);cursor:pointer;transition:transform 0.1s, box-shadow 0.1s;
+  }
+  .item-compact:hover{box-shadow:var(--shadow);}
+  .item-compact:active{transform:scale(0.99);}
+  .ic-left{display:flex;align-items:center;gap:10px;min-width:0;}
+  .ic-left .item-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .ic-dot{width:11px;height:11px;border-radius:50%;flex-shrink:0;}
+  .ic-attach-flag{font-size:12px;opacity:0.6;flex-shrink:0;}
+  .item-row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
+  .item-name{font-weight:700;font-size:15px;color:var(--ink);}
+  .item-name.done{text-decoration:line-through;color:var(--ink-muted);}
+  .item-meta{font-family:'Nunito',sans-serif;font-weight:600;font-size:11.5px;color:var(--ink-muted);white-space:nowrap;background:var(--surface-soft);padding:3px 9px;border-radius:9px;}
+  .item-meta.overdue{color:#fff;background:var(--coral-deep);font-weight:700;}
+  .item-notes{font-size:13px;color:var(--ink-muted);}
+  .item-actions{display:flex;gap:8px;align-items:center;}
+  .icon-btn{
+    background:var(--surface-soft);border:none;color:var(--ink-muted);
+    border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:13px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .icon-btn:hover{background:var(--border);color:var(--ink);}
+  .check-btn{
+    background:none;border:2px solid var(--amber-deep);color:var(--amber-deep);
+    border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:14px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .check-btn.checked{background:var(--amber-deep);color:#fff;border-color:var(--amber-deep);}
+
+  .progress-wrap{background:var(--surface-soft);border-radius:8px;height:8px;overflow:hidden;margin-top:4px;}
+  .progress-bar{height:100%;border-radius:8px;}
+
+  .subtasks{margin-top:6px;display:flex;flex-direction:column;gap:4px;}
+  .subtask{display:flex;align-items:center;gap:8px;font-size:13px;}
+  .subtask input{accent-color:var(--coral);width:16px;height:16px;}
+  .subtask.done label{text-decoration:line-through;color:var(--ink-muted);}
+  .add-subtask-row{display:flex;gap:6px;margin-top:6px;}
+  .add-subtask-row input{
+    flex:1;background:var(--surface-soft);border:none;color:var(--ink);
+    border-radius:10px;padding:7px 10px;font-size:13px;font-family:'Nunito',sans-serif;
+  }
+  .mini-btn{
+    background:var(--coral);border:none;color:#fff;font-weight:700;
+    border-radius:10px;padding:6px 12px;font-size:12.5px;cursor:pointer;
+  }
+
+  .empty-cat{color:var(--ink-muted);font-size:13px;padding:8px 2px;}
+
+  /* Modal (bottom sheet) */
+  .overlay{
+    position:fixed;inset:0;background:rgba(62,62,92,0.35);
+    display:flex;align-items:flex-end;justify-content:center;z-index:50;
+    padding:0;
+  }
+  @keyframes sheetUp{
+    from{transform:translateY(24px);opacity:0.6;}
+    to{transform:translateY(0);opacity:1;}
+  }
+  @keyframes overlayFade{
+    from{opacity:0;}
+    to{opacity:1;}
+  }
+  .overlay{animation: overlayFade 0.18s ease-out;}
+  @keyframes boardFade{
+    from{opacity:0;transform:translateY(8px);}
+    to{opacity:1;transform:translateY(0);}
+  }
+  .board-fade{animation: boardFade 0.22s ease-out;}
+  .modal{
+    background:var(--surface);border-radius:24px 24px 0 0;
+    width:100%;max-width:460px;padding:10px 24px 26px;max-height:88vh;overflow-y:auto;
+    animation:sheetUp 0.22s ease-out;
+  }
+  .sheet-handle{
+    width:40px;height:5px;border-radius:3px;background:var(--border);
+    margin:0 auto 16px;touch-action:none;cursor:grab;
+    padding:10px 30px;background-clip:content-box;box-sizing:content-box;
+  }
+  .modal h3{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:19px;margin:0 0 16px;color:var(--ink);}
+  .field{margin-bottom:13px;}
+  .field label{display:block;font-size:12.5px;font-weight:700;color:var(--ink-muted);margin-bottom:5px;}
+  .field input, .field select, .field textarea{
+    width:100%;background:var(--surface-soft);border:none;color:var(--ink);
+    border-radius:12px;padding:10px 12px;font-size:14px;font-family:'Nunito',sans-serif;
+  }
+  .field input[type="file"]{
+    padding:10px 8px;font-size:12.5px;color:var(--ink-muted);
+  }
+  .field textarea{resize:vertical;min-height:50px;}
+  .modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;}
+  .cancel-btn{
+    background:var(--surface-soft);border:none;color:var(--ink-muted);font-weight:700;
+    border-radius:12px;padding:10px 16px;font-size:14px;cursor:pointer;
+  }
+  .toggle-row{display:flex;gap:8px;margin-top:2px;}
+  .toggle-opt{
+    flex:1;text-align:center;padding:8px 4px;border:2px solid var(--border);
+    border-radius:12px;font-size:12.5px;font-weight:700;cursor:pointer;color:var(--ink-muted);
+  }
+  .toggle-opt.active{border-color:var(--coral);color:var(--coral-deep);background:rgba(255,158,158,0.12);}
+
+  .attachment-preview{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+  .attach-thumb{
+    position:relative;width:56px;height:56px;border-radius:12px;overflow:hidden;
+    background:var(--surface-soft);display:flex;align-items:center;justify-content:center;
+    font-size:22px;cursor:pointer;
+  }
+  .attach-thumb img{width:100%;height:100%;object-fit:cover;}
+  .attach-remove{
+    position:absolute;top:-6px;right:-6px;background:var(--coral-deep);color:#fff;
+    border:none;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .lightbox{
+    position:fixed;inset:0;background:rgba(20,20,40,0.85);z-index:100;
+    display:flex;align-items:center;justify-content:center;padding:30px;
+  }
+  .lightbox img{max-width:100%;max-height:100%;border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,0.4);}
+  .lightbox-close{
+    position:fixed;top:calc(20px + env(safe-area-inset-top));right:20px;
+    background:rgba(255,255,255,0.9);border:none;color:var(--ink);
+    border-radius:50%;width:38px;height:38px;font-size:16px;cursor:pointer;
+  }
+
+  ::-webkit-scrollbar{width:8px;height:8px;}
+  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>Husets Almanacka</h1>
+      <div class="date-line" id="dateLine"></div>
+    </div>
+  </header>
+
+  <div class="nextup">
+    <h2>Nästa upp</h2>
+    <div class="ribbon" id="ribbon"></div>
+  </div>
+
+  <div id="secondaryRibbons"></div>
+
+  <div class="board" id="board"></div>
+</div>
+
+<button class="fab" onclick="openModal()" title="Ny post">+</button>
+
+<div class="lightbox" id="lightbox" style="display:none;" onclick="closeLightbox()">
+  <img id="lightboxImg" src="" onclick="event.stopPropagation()">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+</div>
+
+<div class="overlay" id="overlay" style="display:none;" onclick="if(event.target===this) closeModal()">
+  <div class="modal">
+    <div class="sheet-handle"></div>
+    <h3 id="modalTitle">Ny post</h3>
+    <input type="hidden" id="editId">
+    <div class="field">
+      <label>Namn</label>
+      <input id="f-name" placeholder="T.ex. Klipp häcken">
+    </div>
+    <div class="field">
+      <label>Kategori</label>
+      <select id="f-category" onchange="handleCategoryChange(this.value)"></select>
+    </div>
+    <div class="field" id="subcategoryWrap" style="display:none;">
+      <label>Underkategori</label>
+      <select id="f-subcategory"></select>
+    </div>
+    <div class="field" id="customFieldsWrap" style="display:none;">
+      <label id="customFieldsLabel">Kategorins egna fält</label>
+      <div id="customFieldsInputs"></div>
+    </div>
+    <div class="field">
+      <label>Typ</label>
+      <div class="toggle-row" id="typeToggle">
+        <div class="toggle-opt active" data-type="task" onclick="setType('task')">Uppgift</div>
+        <div class="toggle-opt" data-type="project" onclick="setType('project')">Projekt (checklista)</div>
+      </div>
+    </div>
+    <div class="field">
+      <label>Förfallodatum</label>
+      <input type="date" id="f-due">
+    </div>
+    <div class="field">
+      <label>Återkommer</label>
+      <select id="f-recurrence">
+        <option value="none">Nej, engångs</option>
+        <option value="weekly">Varje vecka</option>
+        <option value="monthly">Varje månad</option>
+        <option value="quarterly">Var 3:e månad</option>
+        <option value="yearly">Varje år</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Anteckning</label>
+      <textarea id="f-notes" placeholder="Detaljer, t.ex. vilket gödsel eller filtertyp..."></textarea>
+    </div>
+    <div class="field">
+      <label>Bilagor (bilder eller PDF)</label>
+      <input type="file" id="f-attachments" accept="image/*,.pdf,application/pdf" multiple onchange="handleAttachmentSelect(event)">
+      <div style="font-size:11px;color:var(--ink-muted);margin-top:5px;">Bilder komprimeras automatiskt. Undvik stora PDF-filer – lagringsutrymmet i telefonens webbläsare är begränsat.</div>
+      <div class="attachment-preview" id="attachmentPreview"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="cancel-btn" onclick="closeModal()">Avbryt</button>
+      <button class="add-btn" onclick="saveItem()">Spara</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="catOverlay" style="display:none;" onclick="if(event.target===this) closeCatModal()">
+  <div class="modal">
+    <div class="sheet-handle"></div>
+    <h3 id="catModalTitle">Ny kategori</h3>
+    <input type="hidden" id="editCatId">
+    <div class="field">
+      <label>Namn</label>
+      <input id="cat-name" placeholder="T.ex. Källare">
+    </div>
+    <div class="field">
+      <label>Färg</label>
+      <div class="swatch-grid" id="swatchGrid"></div>
+    </div>
+    <div class="field">
+      <label>Egna fält (valfritt) – t.ex. reg.nummer, mätarställning</label>
+      <div id="customFieldsBuilder"></div>
+      <button type="button" class="mini-btn" onclick="addCustomFieldRow()">+ Lägg till fält</button>
+    </div>
+    <div class="field">
+      <label style="display:flex;align-items:center;gap:8px;">
+        <input type="checkbox" id="cat-exclude-nextup" style="width:auto;">
+        Visa inte poster härifrån i "Nästa upp"
+      </label>
+    </div>
+    <div class="modal-actions" id="catModalActions">
+      <button class="cancel-btn" onclick="closeCatModal()">Avbryt</button>
+      <button class="add-btn" onclick="saveCategory()">Spara</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="subcatOverlay" style="display:none;" onclick="if(event.target===this) closeSubcatModal()">
+  <div class="modal">
+    <div class="sheet-handle"></div>
+    <h3 id="subcatModalTitle">Ny underkategori</h3>
+    <input type="hidden" id="editSubcatId">
+    <input type="hidden" id="subcatParentCategory">
+    <div class="field">
+      <label>Namn</label>
+      <input id="subcat-name" placeholder="T.ex. Häck">
+    </div>
+    <div class="modal-actions" id="subcatModalActions">
+      <button class="cancel-btn" onclick="closeSubcatModal()">Avbryt</button>
+      <button class="add-btn" onclick="saveSubcategory()">Spara</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="detailOverlay" style="display:none;" onclick="if(event.target.id==='detailOverlay') closeDetail()">
+  <div class="modal">
+    <div class="sheet-handle"></div>
+    <div id="detailBody"></div>
+    <div class="modal-actions" id="detailActions" style="flex-wrap:wrap;"></div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'household-tracker-data';
+let state = { items: [], categories: [], subcategories: [] };
+let currentType = 'task';
+let activeCategory = null;
+let activeSubcategory = null;
+let selectedSwatch = null;
+let stagedAttachments = [];
+let stagedCustomFields = [];
+
+const DEFAULT_CATEGORIES = [
+  { id:'garden',  label:'Trädgård',     color:'#C3E8C6' },
+  { id:'house',   label:'Hus & Teknik', color:'#BFDCF2' },
+  { id:'project', label:'Renovering',   color:'#FBDDA0' }
+];
+
+const SWATCHES = ['#C3E8C6','#BFDCF2','#FBDDA0','#F3C6D6','#D9CDF2','#B4E6DA','#F2CBB0','#EDE2AE'];
+
+function getCategories(){
+  return state.categories;
+}
+
+function getCategory(id){
+  return state.categories.find(c=>c.id===id) || { id, label:'Okänd', color:'#555' };
+}
+
+function todayISO(){ return new Date().toISOString().slice(0,10); }
+
+function fmtDate(iso){
+  if(!iso) return '—';
+  const d = new Date(iso+'T00:00:00');
+  return d.toLocaleDateString('sv-SE', {weekday:'short', day:'numeric', month:'short'});
+}
+
+function isWeekendDate(iso){
+  if(!iso) return false;
+  const day = new Date(iso+'T00:00:00').getDay();
+  return day===0 || day===6;
+}
+
+function isOverdue(iso){
+  if(!iso) return false;
+  return iso < todayISO();
+}
+
+function daysUntil(iso){
+  if(!iso) return Infinity;
+  const d1 = new Date(todayISO());
+  const d2 = new Date(iso);
+  return Math.round((d2-d1)/86400000);
+}
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){
+      state = JSON.parse(raw);
+    }
+  }catch(e){
+    console.log('Ingen sparad data ännu, startar tomt.');
+  }
+  if(!state.categories || state.categories.length===0){
+    state.categories = DEFAULT_CATEGORIES.map(c=>({...c}));
+  }
+  if(!state.items) state.items = [];
+  if(!state.subcategories) state.subcategories = [];
+  seedHackData();
+  seedJobSchedule();
+  seedJobScheduleV2();
+  fixJobExcludeFlag();
+  render();
+}
+
+function fixJobExcludeFlag(){
+  if(state.fixJobExcludeV1) return;
+  const cat = state.categories.find(c=>c.label==='Jobb');
+  if(cat && !cat.excludeFromNextUp){
+    cat.excludeFromNextUp = true;
+    saveState();
+  }
+  state.fixJobExcludeV1 = true;
+  saveState();
+}
+
+function seedJobScheduleV2(){
+  if(state.seedJobV2) return;
+
+  const cat = state.categories.find(c=>c.label==='Jobb');
+  const subcat = cat ? state.subcategories.find(s=>s.categoryId===cat.id && s.label==='Schema') : null;
+  if(!cat || !subcat){ state.seedJobV2 = true; return; }
+
+  const shifts = [
+    { d:'2026-08-25', name:'08:00–17:00', notes:'Ordinarie pass, 9:00 h' },
+    { d:'2026-08-26', name:'07:00–17:00', notes:'07:00–08:00 (1:00 h) + 08:00–17:00 (9:00 h)' },
+    { d:'2026-09-02', name:'08:00–17:00', notes:'Ordinarie pass, 9:00 h' },
+    { d:'2026-09-03', name:'07:00–17:00', notes:'07:00–08:00 (1:00 h) + 08:00–17:00 (9:00 h)' },
+    { d:'2026-09-07', name:'14:00–24:00', notes:'Kvällspass, 10:00 h · Tfk 0:08' },
+    { d:'2026-09-08', name:'14:00–24:00', notes:'14:00–15:00 (1:00 h) + 15:00–24:00 (9:00 h) · Tfk 0:08' },
+    { d:'2026-09-13', name:'16:00–02:00', notes:'Övernattningspass, 10:00 h · Tfk 0:54 · 53-RSHVAL / CIVINGPO' },
+    { d:'2026-09-15', name:'08:00–17:00', notes:'Ordinarie pass, 9:00 h' },
+    { d:'2026-09-16', name:'14:00–24:00', notes:'14:00–15:00 (1:00 h) + 15:00–24:00 (9:00 h) · Tfk 0:08' },
+    { d:'2026-09-17', name:'15:00–24:00', notes:'Kvällspass, 9:00 h · Tfk 0:08' },
+    { d:'2026-09-22', name:'08:00–17:00', notes:'Ordinarie pass, 9:00 h' },
+    { d:'2026-09-23', name:'07:00–17:00', notes:'07:00–08:00 (1:00 h) + 08:00–17:00 (9:00 h)' },
+    { d:'2026-09-25', name:'14:00–24:00', notes:'Kvällspass, 10:00 h · Tfk 0:16' },
+    { d:'2026-09-26', name:'15:00–24:00', notes:'Kvällspass, 9:00 h · Tfk 0:51' },
+    { d:'2026-09-27', name:'15:00–24:00', notes:'Kvällspass, 9:00 h · Tfk 0:43' }
+  ];
+
+  shifts.forEach(s=>{
+    state.items.push({
+      id: uid(),
+      category: cat.id,
+      subcategoryId: subcat.id,
+      dueDate: s.d,
+      recurrence: 'none',
+      notes: s.notes,
+      name: s.name,
+      type: 'task',
+      attachments: [],
+      customValues: {},
+      completed: false
+    });
+  });
+
+  state.seedJobV2 = true;
+  saveState();
+}
+
+function seedHackData(){
+  if(state.seedHackV1) return;
+
+  const cat = state.categories.find(c=>c.id==='garden')
+    || state.categories.find(c=>c.label==='Trädgård')
+    || state.categories[0];
+  if(!cat){ state.seedHackV1 = true; return; }
+
+  let subcat = state.subcategories.find(s=>s.categoryId===cat.id && s.label==='Häck');
+  if(!subcat){
+    subcat = { id: uid(), categoryId: cat.id, label: 'Häck' };
+    state.subcategories.push(subcat);
+  }
+
+  const seedItems = [
+    { name:'Häck – höststädning', dueDate:'2026-09-15', notes:'Rensa döda kvistar/löv längst ner. Vattna vid torka innan tjäle. Klipp/gödsla INTE nu.' },
+    { name:'Häck – föryngringsbeskärning', dueDate:'2027-03-15', notes:'Klipp en sektion i taget (börja gulaste/glesaste delen) ner till 30–50 cm. Gödsla hela häcken med barrväxtgödsel (järn+magnesium).' },
+    { name:'Häck – kolla nya skott', dueDate:'2027-05-20', notes:'Vattna djupt men sällan. Extra vatten på nyklippta sektioner vid torka.' },
+    { name:'Häck – lätt formklippning', dueDate:'2026-08-15', notes:'Klipp bara ytan på delarna som INTE föryngringsbeskurits. Fortsätt bevattna vid torka.' },
+    { name:'Häck – utvärdera & planera nästa sektion', dueDate:'2026-10-01', notes:'Se hur den föryngrade delen mår. Bestäm vilken sektion som är näst på tur.' }
+  ];
+
+  seedItems.forEach(it=>{
+    state.items.push({
+      id: uid(),
+      category: cat.id,
+      subcategoryId: subcat.id,
+      dueDate: it.dueDate,
+      recurrence: 'yearly',
+      notes: it.notes,
+      name: it.name,
+      type: 'task',
+      attachments: [],
+      customValues: {},
+      completed: false
+    });
+  });
+
+  state.seedHackV1 = true;
+  saveState();
+}
+
+function seedJobSchedule(){
+  if(state.seedJobV1) return;
+
+  let cat = state.categories.find(c=>c.label==='Jobb');
+  if(!cat){
+    cat = { id: uid(), label:'Jobb', color:'#D9CDF2', customFields:[], excludeFromNextUp:true };
+    state.categories.push(cat);
+  }
+  cat.excludeFromNextUp = true;
+
+  let subcat = state.subcategories.find(s=>s.categoryId===cat.id && s.label==='Schema');
+  if(!subcat){
+    subcat = { id: uid(), categoryId: cat.id, label: 'Schema' };
+    state.subcategories.push(subcat);
+  }
+
+  const shifts = [
+    { d:'2026-08-03', name:'08:00–15:42', notes:'Ordinarie pass, 7:42 h' },
+    { d:'2026-08-04', name:'08:00–15:42', notes:'Ordinarie pass, 7:42 h' },
+    { d:'2026-08-05', name:'08:00–15:42', notes:'Ordinarie pass, 7:42 h' },
+    { d:'2026-08-06', name:'08:00–15:42', notes:'Ordinarie pass, 7:42 h' },
+    { d:'2026-08-07', name:'08:00–15:42', notes:'Ordinarie pass, 7:42 h' },
+    { d:'2026-08-10', name:'07:00–17:00', notes:'07:00–08:00 (1:00 h) + 08:00–17:00 (9:00 h)' },
+    { d:'2026-08-11', name:'08:00–17:00', notes:'Ordinarie pass, 9:00 h' },
+    { d:'2026-08-12', name:'15:00–24:00', notes:'Kvällspass, 9:00 h · Tfk 0:08' },
+    { d:'2026-08-13', name:'15:00–24:00', notes:'Kvällspass, 9:00 h · Tfk 0:08' },
+    { d:'2026-08-14', name:'08:00–15:42', notes:'Ordinarie pass, 7:42 h' },
+    { d:'2026-08-15', name:'08:00–15:42', notes:'Ordinarie pass, 7:42 h' },
+    { d:'2026-08-16', name:'08:00–15:42', notes:'Ordinarie pass, 7:42 h' },
+    { d:'2026-08-17', name:'08:00–17:00', notes:'Ordinarie pass, 9:00 h' },
+    { d:'2026-08-18', name:'08:00–17:00', notes:'Rast 30 min, 8:30 h · 533-GRPDAG / Deltagare' },
+    { d:'2026-08-19', name:'14:00–24:00', notes:'14:00–15:00 (1:00 h) + 15:00–24:00 (9:00 h) · Tfk 0:08' },
+    { d:'2026-08-20', name:'15:00–24:00', notes:'Kvällspass, 9:00 h · Tfk 0:08' },
+    { d:'2026-08-22', name:'10:00–20:00', notes:'10:00 h · Tfk 0:50 · 53-RSHVAL / CIVINGPO' },
+    { d:'2026-08-23', name:'10:00–20:00', notes:'10:00 h · Tfk 0:50 · 53-RSHVAL / CIVINGPO' }
+  ];
+
+  shifts.forEach(s=>{
+    state.items.push({
+      id: uid(),
+      category: cat.id,
+      subcategoryId: subcat.id,
+      dueDate: s.d,
+      recurrence: 'none',
+      notes: s.notes,
+      name: s.name,
+      type: 'task',
+      attachments: [],
+      customValues: {},
+      completed: false
+    });
+  });
+
+  state.seedJobV1 = true;
+  saveState();
+}
+
+function saveState(){
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }catch(e){
+    if(e && (e.name==='QuotaExceededError' || e.code===22)){
+      alert('Lagringsutrymmet i webbläsaren är fullt. Ta bort någon bilaga eller en gammal post för att göra plats.');
+    }else{
+      console.error('Kunde inte spara', e);
+    }
+  }
+}
+
+function compressImage(file, callback){
+  const reader = new FileReader();
+  reader.onload = (e)=>{
+    const img = new Image();
+    img.onload = ()=>{
+      const maxDim = 1280;
+      let w = img.width, h = img.height;
+      if(w>maxDim || h>maxDim){
+        if(w>h){ h = Math.round(h*maxDim/w); w = maxDim; }
+        else{ w = Math.round(w*maxDim/h); h = maxDim; }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      callback(canvas.toDataURL('image/jpeg', 0.75));
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function handleAttachmentSelect(event){
+  const files = Array.from(event.target.files);
+  files.forEach(file=>{
+    const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+    if(file.type.startsWith('image/')){
+      compressImage(file, (dataUrl)=>{
+        stagedAttachments.push({id:uid(), name:file.name, type:'image', dataUrl});
+        renderAttachmentPreview();
+      });
+    }else if(isPdf){
+      const reader = new FileReader();
+      reader.onload = (e)=>{
+        stagedAttachments.push({id:uid(), name:file.name, type:'pdf', dataUrl:e.target.result});
+        renderAttachmentPreview();
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+  event.target.value = '';
+}
+
+function renderAttachmentPreview(){
+  const wrap = document.getElementById('attachmentPreview');
+  if(!wrap) return;
+  wrap.innerHTML = '';
+  stagedAttachments.forEach(a=>{
+    const thumb = document.createElement('div');
+    thumb.className = 'attach-thumb';
+    thumb.title = a.name;
+    thumb.innerHTML = a.type==='image' ? `<img src="${a.dataUrl}">` : '📄';
+    const rm = document.createElement('button');
+    rm.className = 'attach-remove';
+    rm.innerHTML = '✕';
+    rm.onclick = ()=>{ stagedAttachments = stagedAttachments.filter(x=>x.id!==a.id); renderAttachmentPreview(); };
+    thumb.appendChild(rm);
+    wrap.appendChild(thumb);
+  });
+}
+
+function dataURLtoBlob(dataUrl){
+  const parts = dataUrl.split(',');
+  const mimeMatch = parts[0].match(/:(.*?);/);
+  const mime = mimeMatch ? mimeMatch[1] : 'application/octet-stream';
+  const binary = atob(parts[1]);
+  const bytes = new Uint8Array(binary.length);
+  for(let i=0;i<binary.length;i++){ bytes[i] = binary.charCodeAt(i); }
+  return new Blob([bytes], {type: mime});
+}
+
+function openAttachment(a){
+  if(a.type==='image'){
+    openLightbox(a.dataUrl);
+    return;
+  }
+  try{
+    const blob = dataURLtoBlob(a.dataUrl);
+    const url = URL.createObjectURL(blob);
+    window.open(url, '_blank');
+    setTimeout(()=>URL.revokeObjectURL(url), 60000);
+  }catch(e){
+    alert('Kunde inte öppna PDF-filen.');
+  }
+}
+
+function openLightbox(url){
+  document.getElementById('lightboxImg').src = url;
+  document.getElementById('lightbox').style.display = 'flex';
+}
+
+function closeLightbox(){
+  document.getElementById('lightbox').style.display = 'none';
+  document.getElementById('lightboxImg').src = '';
+}
+
+function uid(){ return Math.random().toString(36).slice(2,10); }
+
+function exportData(){
+  const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'husets-almanacka-backup-' + todayISO() + '.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function importData(event){
+  const file = event.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (e)=>{
+    try{
+      const imported = JSON.parse(e.target.result);
+      if(!imported || !Array.isArray(imported.items)){
+        alert('Filen ser inte ut som en giltig backup.');
+        return;
+      }
+      const replace = confirm(
+        'Vill du ersätta din nuvarande data med den importerade filen?\n\n' +
+        'OK = ersätt allt\nAvbryt = slå ihop med det du redan har'
+      );
+      if(replace){
+        state = imported;
+      }else{
+        const existingIds = new Set(state.items.map(i=>i.id));
+        imported.items.forEach(i=>{
+          if(!existingIds.has(i.id)) state.items.push(i);
+        });
+      }
+      saveState();
+      render();
+      alert('Import klar!');
+    }catch(err){
+      alert('Kunde inte läsa filen: ' + err.message);
+    }
+    event.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
+function renderCustomFieldInputs(catId, values){
+  const cat = getCategory(catId);
+  const wrap = document.getElementById('customFieldsWrap');
+  const container = document.getElementById('customFieldsInputs');
+  const fields = cat.customFields || [];
+  if(fields.length===0){
+    wrap.style.display = 'none';
+    container.innerHTML = '';
+    return;
+  }
+  wrap.style.display = 'block';
+  document.getElementById('customFieldsLabel').textContent = cat.label + ' – egna fält';
+  container.innerHTML = fields.map(f=>{
+    const val = (values && values[f.id]!==undefined) ? values[f.id] : (f.type==='checkbox' ? false : '');
+    if(f.type==='checkbox'){
+      return `<label style="display:flex;align-items:center;gap:8px;font-size:14px;margin-bottom:8px;">
+        <input type="checkbox" data-cf="${f.id}" ${val?'checked':''} style="width:auto;">
+        ${escapeHtml(f.label)}
+      </label>`;
+    }
+    const inputType = f.type==='number' ? 'number' : f.type==='date' ? 'date' : 'text';
+    return `<div style="margin-bottom:8px;">
+      <label style="font-size:12px;">${escapeHtml(f.label)}</label>
+      <input type="${inputType}" data-cf="${f.id}" value="${escapeHtml(String(val))}">
+    </div>`;
+  }).join('');
+}
+
+function populateCategorySelect(selected){
+  const sel = document.getElementById('f-category');
+  sel.innerHTML = state.categories.map(c=>
+    `<option value="${c.id}">${escapeHtml(c.label)}</option>`
+  ).join('');
+  sel.value = selected || (state.categories[0] && state.categories[0].id) || '';
+}
+
+function populateSubcategorySelect(catId, selectedSubId){
+  const wrap = document.getElementById('subcategoryWrap');
+  const sel = document.getElementById('f-subcategory');
+  const subs = state.subcategories.filter(s=>s.categoryId===catId);
+  if(subs.length===0){
+    wrap.style.display = 'none';
+    sel.innerHTML = '';
+    return;
+  }
+  wrap.style.display = 'block';
+  sel.innerHTML = '<option value="">Ingen underkategori</option>' +
+    subs.map(s=>`<option value="${s.id}">${escapeHtml(s.label)}</option>`).join('');
+  sel.value = selectedSubId || '';
+}
+
+function handleCategoryChange(catId){
+  renderCustomFieldInputs(catId, {});
+  populateSubcategorySelect(catId, activeSubcategory && (getCategory(catId).id===activeCategory) ? activeSubcategory : '');
+}
+
+function openModal(prefillCat){
+  document.getElementById('editId').value='';
+  document.getElementById('modalTitle').textContent='Ny post';
+  document.getElementById('f-name').value='';
+  const catId = prefillCat || activeCategory || (state.categories[0] && state.categories[0].id);
+  populateCategorySelect(catId);
+  renderCustomFieldInputs(catId, {});
+  populateSubcategorySelect(catId, activeSubcategory || '');
+  document.getElementById('f-due').value='';
+  document.getElementById('f-recurrence').value='none';
+  document.getElementById('f-notes').value='';
+  stagedAttachments = [];
+  renderAttachmentPreview();
+  setType('task');
+  document.getElementById('overlay').style.display='flex';
+}
+
+function editItem(id){
+  const item = state.items.find(i=>i.id===id);
+  if(!item) return;
+  document.getElementById('editId').value=id;
+  document.getElementById('modalTitle').textContent='Redigera post';
+  document.getElementById('f-name').value=item.name;
+  populateCategorySelect(item.category);
+  renderCustomFieldInputs(item.category, item.customValues || {});
+  populateSubcategorySelect(item.category, item.subcategoryId || '');
+  document.getElementById('f-due').value=item.dueDate||'';
+  document.getElementById('f-recurrence').value=item.recurrence||'none';
+  document.getElementById('f-notes').value=item.notes||'';
+  stagedAttachments = item.attachments ? item.attachments.map(a=>({...a})) : [];
+  renderAttachmentPreview();
+  setType(item.type);
+  document.getElementById('overlay').style.display='flex';
+}
+
+function renderSwatches(){
+  const grid = document.getElementById('swatchGrid');
+  grid.innerHTML = SWATCHES.map(c=>
+    `<div class="swatch ${c===selectedSwatch?'selected':''}" style="background:${c}" onclick="pickSwatch('${c}')"></div>`
+  ).join('');
+}
+
+function pickSwatch(c){
+  selectedSwatch = c;
+  renderSwatches();
+}
+
+function renderCustomFieldsBuilder(){
+  const wrap = document.getElementById('customFieldsBuilder');
+  wrap.innerHTML = stagedCustomFields.map((f,i)=>`
+    <div style="display:flex;gap:6px;margin-bottom:6px;align-items:center;">
+      <input type="text" placeholder="Fältnamn" value="${escapeHtml(f.label)}" oninput="updateCustomFieldLabel(${i}, this.value)" style="flex:1;">
+      <select onchange="updateCustomFieldType(${i}, this.value)" style="width:auto;flex-shrink:0;">
+        <option value="text" ${f.type==='text'?'selected':''}>Text</option>
+        <option value="number" ${f.type==='number'?'selected':''}>Nummer</option>
+        <option value="date" ${f.type==='date'?'selected':''}>Datum</option>
+        <option value="checkbox" ${f.type==='checkbox'?'selected':''}>Kryssruta</option>
+      </select>
+      <button type="button" class="icon-btn" onclick="removeCustomFieldRow(${i})">✕</button>
+    </div>
+  `).join('');
+}
+
+function addCustomFieldRow(){
+  stagedCustomFields.push({ id: uid(), label: '', type: 'text' });
+  renderCustomFieldsBuilder();
+}
+
+function updateCustomFieldLabel(i, val){
+  stagedCustomFields[i].label = val;
+}
+
+function updateCustomFieldType(i, val){
+  stagedCustomFields[i].type = val;
+}
+
+function removeCustomFieldRow(i){
+  stagedCustomFields.splice(i, 1);
+  renderCustomFieldsBuilder();
+}
+
+function openNewCategoryModal(){
+  document.getElementById('editCatId').value='';
+  document.getElementById('catModalTitle').textContent='Ny kategori';
+  document.getElementById('cat-name').value='';
+  document.getElementById('cat-exclude-nextup').checked = false;
+  selectedSwatch = SWATCHES[Math.floor(Math.random()*SWATCHES.length)];
+  renderSwatches();
+  stagedCustomFields = [];
+  renderCustomFieldsBuilder();
+  const actions = document.getElementById('catModalActions');
+  actions.innerHTML = `
+    <button class="cancel-btn" onclick="closeCatModal()">Avbryt</button>
+    <button class="add-btn" onclick="saveCategory()">Spara</button>
+  `;
+  document.getElementById('catOverlay').style.display='flex';
+}
+
+function openEditCategoryModal(catId){
+  const cat = getCategory(catId);
+  document.getElementById('editCatId').value=catId;
+  document.getElementById('catModalTitle').textContent='Redigera kategori';
+  document.getElementById('cat-name').value=cat.label;
+  document.getElementById('cat-exclude-nextup').checked = !!cat.excludeFromNextUp;
+  selectedSwatch = cat.color;
+  renderSwatches();
+  stagedCustomFields = (cat.customFields || []).map(f=>({...f}));
+  renderCustomFieldsBuilder();
+  const hasItems = state.items.some(i=>i.category===catId);
+  const actions = document.getElementById('catModalActions');
+  actions.innerHTML = `
+    ${!hasItems ? `<button class="delete-cat-btn" onclick="deleteCategory('${catId}')">Ta bort</button>` : ''}
+    <button class="cancel-btn" onclick="closeCatModal()">Avbryt</button>
+    <button class="add-btn" onclick="saveCategory()">Spara</button>
+  `;
+  document.getElementById('catOverlay').style.display='flex';
+}
+
+function closeCatModal(){
+  document.getElementById('catOverlay').style.display='none';
+}
+
+function saveCategory(){
+  const name = document.getElementById('cat-name').value.trim();
+  if(!name){ return; }
+  const editId = document.getElementById('editCatId').value;
+  const cleanFields = stagedCustomFields.filter(f=>f.label.trim()!=='');
+  const excludeFromNextUp = document.getElementById('cat-exclude-nextup').checked;
+  if(editId){
+    const cat = state.categories.find(c=>c.id===editId);
+    cat.label = name;
+    cat.color = selectedSwatch;
+    cat.customFields = cleanFields;
+    cat.excludeFromNextUp = excludeFromNextUp;
+  }else{
+    state.categories.push({ id: uid(), label: name, color: selectedSwatch, customFields: cleanFields, excludeFromNextUp });
+  }
+  saveState();
+  closeCatModal();
+  render();
+}
+
+function deleteCategory(catId){
+  if(state.items.some(i=>i.category===catId)){
+    alert('Kategorin innehåller poster och kan inte tas bort.');
+    return;
+  }
+  if(state.subcategories.some(s=>s.categoryId===catId)){
+    alert('Kategorin har underkategorier och kan inte tas bort. Ta bort dem först.');
+    return;
+  }
+  if(!confirm('Ta bort kategorin?')) return;
+  state.categories = state.categories.filter(c=>c.id!==catId);
+  if(activeCategory===catId) activeCategory=null;
+  saveState();
+  closeCatModal();
+  render();
+}
+
+function openNewSubcategoryModal(categoryId){
+  document.getElementById('editSubcatId').value='';
+  document.getElementById('subcatParentCategory').value=categoryId;
+  document.getElementById('subcatModalTitle').textContent='Ny underkategori';
+  document.getElementById('subcat-name').value='';
+  const actions = document.getElementById('subcatModalActions');
+  actions.innerHTML = `
+    <button class="cancel-btn" onclick="closeSubcatModal()">Avbryt</button>
+    <button class="add-btn" onclick="saveSubcategory()">Spara</button>
+  `;
+  document.getElementById('subcatOverlay').style.display='flex';
+}
+
+function openEditSubcategoryModal(subId){
+  const subcat = state.subcategories.find(s=>s.id===subId);
+  if(!subcat) return;
+  document.getElementById('editSubcatId').value=subId;
+  document.getElementById('subcatParentCategory').value=subcat.categoryId;
+  document.getElementById('subcatModalTitle').textContent='Redigera underkategori';
+  document.getElementById('subcat-name').value=subcat.label;
+  const hasItems = state.items.some(i=>i.subcategoryId===subId);
+  const actions = document.getElementById('subcatModalActions');
+  actions.innerHTML = `
+    ${!hasItems ? `<button class="delete-cat-btn" onclick="deleteSubcategory('${subId}')">Ta bort</button>` : ''}
+    <button class="cancel-btn" onclick="closeSubcatModal()">Avbryt</button>
+    <button class="add-btn" onclick="saveSubcategory()">Spara</button>
+  `;
+  document.getElementById('subcatOverlay').style.display='flex';
+}
+
+function closeSubcatModal(){
+  document.getElementById('subcatOverlay').style.display='none';
+}
+
+function saveSubcategory(){
+  const name = document.getElementById('subcat-name').value.trim();
+  if(!name) return;
+  const editId = document.getElementById('editSubcatId').value;
+  const categoryId = document.getElementById('subcatParentCategory').value;
+  if(editId){
+    const subcat = state.subcategories.find(s=>s.id===editId);
+    subcat.label = name;
+  }else{
+    state.subcategories.push({ id: uid(), categoryId, label: name });
+  }
+  saveState();
+  closeSubcatModal();
+  render();
+}
+
+function deleteSubcategory(subId){
+  if(state.items.some(i=>i.subcategoryId===subId)){
+    alert('Underkategorin innehåller poster och kan inte tas bort.');
+    return;
+  }
+  if(!confirm('Ta bort underkategorin?')) return;
+  state.subcategories = state.subcategories.filter(s=>s.id!==subId);
+  if(activeSubcategory===subId) activeSubcategory=null;
+  saveState();
+  closeSubcatModal();
+  render();
+}
+
+function closeModal(){
+  document.getElementById('overlay').style.display='none';
+}
+
+function setType(t){
+  currentType = t;
+  document.querySelectorAll('.toggle-opt').forEach(el=>{
+    el.classList.toggle('active', el.dataset.type===t);
+  });
+}
+
+function saveItem(){
+  const name = document.getElementById('f-name').value.trim();
+  if(!name){ return; }
+  const id = document.getElementById('editId').value;
+  const categoryId = document.getElementById('f-category').value;
+  const cat = getCategory(categoryId);
+  const customValues = {};
+  (cat.customFields || []).forEach(f=>{
+    const el = document.querySelector(`#customFieldsInputs [data-cf="${f.id}"]`);
+    if(el){
+      customValues[f.id] = f.type==='checkbox' ? el.checked : el.value;
+    }
+  });
+  const data = {
+    category: categoryId,
+    subcategoryId: document.getElementById('f-subcategory').value || null,
+    dueDate: document.getElementById('f-due').value || null,
+    recurrence: document.getElementById('f-recurrence').value,
+    notes: document.getElementById('f-notes').value.trim(),
+    name,
+    type: currentType,
+    attachments: stagedAttachments,
+    customValues
+  };
+  if(id){
+    const item = state.items.find(i=>i.id===id);
+    Object.assign(item, data);
+  }else{
+    state.items.push({
+      id: uid(),
+      ...data,
+      completed:false,
+      subtasks: currentType==='project' ? [] : undefined
+    });
+  }
+  saveState();
+  closeModal();
+  render();
+}
+
+function deleteItem(id){
+  state.items = state.items.filter(i=>i.id!==id);
+  saveState();
+  render();
+}
+
+function addNextDue(iso, recurrence){
+  const d = new Date(iso);
+  if(recurrence==='weekly') d.setDate(d.getDate()+7);
+  else if(recurrence==='monthly') d.setMonth(d.getMonth()+1);
+  else if(recurrence==='quarterly') d.setMonth(d.getMonth()+3);
+  else if(recurrence==='yearly') d.setFullYear(d.getFullYear()+1);
+  return d.toISOString().slice(0,10);
+}
+
+function toggleComplete(id){
+  const item = state.items.find(i=>i.id===id);
+  if(!item) return;
+  if(item.recurrence && item.recurrence!=='none'){
+    const base = item.dueDate || todayISO();
+    item.dueDate = addNextDue(base, item.recurrence);
+    item.completed = false;
+  }else{
+    item.completed = !item.completed;
+  }
+  saveState();
+  render();
+}
+
+function addSubtask(itemId, text){
+  const item = state.items.find(i=>i.id===itemId);
+  if(!item || !text.trim()) return;
+  item.subtasks.push({id:uid(), text:text.trim(), done:false});
+  saveState();
+  render();
+}
+
+function toggleSubtask(itemId, subId){
+  const item = state.items.find(i=>i.id===itemId);
+  const sub = item.subtasks.find(s=>s.id===subId);
+  sub.done = !sub.done;
+  saveState();
+  render();
+}
+
+function deleteSubtask(itemId, subId){
+  const item = state.items.find(i=>i.id===itemId);
+  item.subtasks = item.subtasks.filter(s=>s.id!==subId);
+  saveState();
+  render();
+}
+
+function buildRibbonCards(container, items){
+  container.innerHTML = '';
+  items.forEach(i=>{
+    const overdue = isOverdue(i.dueDate);
+    const cat = getCategory(i.category);
+    const weekendFlag = cat.excludeFromNextUp && isWeekendDate(i.dueDate);
+    const dleft = daysUntil(i.dueDate);
+    let label = fmtDate(i.dueDate);
+    if(overdue) label = 'Försenad · ' + label;
+    else if(dleft===0) label = 'Idag';
+    else if(dleft===1) label = 'Imorgon';
+    const card = document.createElement('div');
+    card.className = 'ribbon-card' + ((overdue||weekendFlag)?' overdue':'');
+    card.style.borderTopColor = cat.color;
+    card.innerHTML = `
+      <div class="rc-name">${escapeHtml(i.name)}</div>
+      <div class="rc-due">${label}</div>
+    `;
+    card.onclick = ()=>openDetail(i.id);
+    container.appendChild(card);
+  });
+}
+
+function renderRibbon(){
+  const ribbon = document.getElementById('ribbon');
+  const upcoming = state.items
+    .filter(i=>i.dueDate && !i.completed && !getCategory(i.category).excludeFromNextUp)
+    .sort((a,b)=> a.dueDate.localeCompare(b.dueDate))
+    .slice(0,5);
+  if(upcoming.length===0){
+    ribbon.innerHTML = '<div class="empty-ribbon">Inget inplanerat just nu — lägg till en post för att komma igång.</div>';
+    return;
+  }
+  buildRibbonCards(ribbon, upcoming);
+}
+
+function renderSecondaryRibbons(){
+  const container = document.getElementById('secondaryRibbons');
+  container.innerHTML = '';
+  const excludedCats = state.categories.filter(c=>c.excludeFromNextUp);
+  excludedCats.forEach(cat=>{
+    const items = state.items
+      .filter(i=>i.category===cat.id && i.dueDate && !i.completed)
+      .sort((a,b)=> a.dueDate.localeCompare(b.dueDate))
+      .slice(0,5);
+    if(items.length===0) return;
+
+    const section = document.createElement('div');
+    section.className = 'nextup';
+    section.style.marginTop = '4px';
+    const heading = document.createElement('h2');
+    heading.textContent = cat.label;
+    section.appendChild(heading);
+
+    const ribbon = document.createElement('div');
+    ribbon.className = 'ribbon';
+    buildRibbonCards(ribbon, items);
+    section.appendChild(ribbon);
+
+    container.appendChild(section);
+  });
+}
+
+function escapeHtml(s){
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function openCategory(catKey){
+  activeCategory = catKey;
+  activeSubcategory = null;
+  render();
+}
+
+function openSubcategory(subId){
+  activeSubcategory = subId;
+  render();
+}
+
+function goBack(){
+  if(activeSubcategory){
+    activeSubcategory = null;
+  }else{
+    activeCategory = null;
+  }
+  render();
+}
+
+function renderItemsList(items){
+  const list = document.createElement('div');
+  if(items.length===0){
+    list.innerHTML = `<div class="empty-cat">Inget här ännu.</div>`;
+    return list;
+  }
+  const cat = getCategory(activeCategory);
+  items.sort((a,b)=>{
+    if(!!a.dueDate !== !!b.dueDate) return a.dueDate ? -1 : 1;
+    return (a.dueDate||'').localeCompare(b.dueDate||'');
+  }).forEach(item=>{
+    try{
+      list.appendChild(renderItemCompact(item, cat));
+    }catch(err){
+      console.error('Kunde inte visa post:', item, err);
+      const errCard = document.createElement('div');
+      errCard.className = 'item-compact';
+      errCard.style.borderLeftColor = '#F17F86';
+      errCard.innerHTML = `<div class="item-name">${escapeHtml(item.name || 'Okänd post')} (skadad data)</div>`;
+      const fixBtn = document.createElement('button');
+      fixBtn.className = 'icon-btn';
+      fixBtn.innerHTML = '✕';
+      fixBtn.title = 'Ta bort';
+      fixBtn.onclick = (e)=>{ e.stopPropagation(); if(confirm('Ta bort "'+(item.name||'posten')+'"?')) deleteItem(item.id); };
+      errCard.appendChild(fixBtn);
+      list.appendChild(errCard);
+    }
+  });
+  return list;
+}
+
+function renderBoard(){
+  const board = document.getElementById('board');
+  board.innerHTML = '';
+  const frag = document.createElement('div');
+  frag.className = 'board-fade';
+
+  if(!activeCategory){
+    function buildCatTile(cat){
+      const items = state.items.filter(i=>i.category===cat.id);
+      const overdue = items.filter(i=>i.dueDate && !i.completed && isOverdue(i.dueDate)).length;
+      let sub = items.length + ' post' + (items.length===1?'':'er');
+      if(overdue>0) sub += ' · ' + overdue + ' försenad' + (overdue===1?'':'e');
+
+      const wrap = document.createElement('div');
+      wrap.className = 'cat-button-wrap';
+
+      const btn = document.createElement('button');
+      btn.className = 'cat-button';
+      btn.style.background = cat.color;
+      btn.style.width = '100%';
+      btn.onclick = ()=>openCategory(cat.id);
+      btn.innerHTML = `
+        <div>
+          <div class="cb-name">${escapeHtml(cat.label)}</div>
+          <div class="cb-sub">${sub}</div>
+        </div>
+        <div class="cb-arrow">→</div>
+      `;
+      wrap.appendChild(btn);
+
+      const editBtn = document.createElement('button');
+      editBtn.className = 'cat-edit-btn';
+      editBtn.innerHTML = '✎';
+      editBtn.onclick = (e)=>{ e.stopPropagation(); openEditCategoryModal(cat.id); };
+      wrap.appendChild(editBtn);
+
+      return wrap;
+    }
+
+    const normalCats = state.categories.filter(c=>!c.excludeFromNextUp);
+    const separateCats = state.categories.filter(c=>c.excludeFromNextUp);
+
+    const grid = document.createElement('div');
+    grid.className = 'cat-buttons';
+    normalCats.forEach(cat=> grid.appendChild(buildCatTile(cat)));
+
+    const addBtn = document.createElement('button');
+    addBtn.className = 'add-cat-button';
+    addBtn.innerHTML = '+ Lägg till kategori';
+    addBtn.onclick = openNewCategoryModal;
+    grid.appendChild(addBtn);
+
+    frag.appendChild(grid);
+
+    if(separateCats.length){
+      const heading = document.createElement('div');
+      heading.style.fontFamily = "'Baloo 2', sans-serif";
+      heading.style.fontWeight = '700';
+      heading.style.fontSize = '13px';
+      heading.style.color = 'var(--ink-muted)';
+      heading.style.margin = '22px 2px 8px';
+      heading.textContent = 'Fristående (visas ej i Nästa upp)';
+      frag.appendChild(heading);
+
+      const sepGrid = document.createElement('div');
+      sepGrid.className = 'cat-buttons';
+      separateCats.forEach(cat=> sepGrid.appendChild(buildCatTile(cat)));
+      frag.appendChild(sepGrid);
+    }
+
+    board.appendChild(frag);
+    return;
+  }
+
+  const cat = getCategory(activeCategory);
+
+  // --- Subcategory detail view ---
+  if(activeSubcategory){
+    const subcat = state.subcategories.find(s=>s.id===activeSubcategory);
+    if(!subcat){ activeSubcategory = null; return renderBoard(); }
+
+    const head = document.createElement('div');
+    head.className = 'cat-detail-head';
+    head.innerHTML = `
+      <button class="back-btn">←</button>
+      <div class="cat-detail-title" style="background:${cat.color};color:var(--ink);">${escapeHtml(subcat.label)}</div>
+      <div style="font-size:12px;color:var(--ink-muted);">i ${escapeHtml(cat.label)}</div>
+      <button class="cat-edit-btn" style="position:static;background:var(--surface-soft);color:var(--ink-muted);margin-left:auto;">✎</button>
+    `;
+    head.querySelector('.back-btn').onclick = goBack;
+    head.querySelector('.cat-edit-btn').onclick = ()=>openEditSubcategoryModal(subcat.id);
+    frag.appendChild(head);
+
+    const items = state.items.filter(i=>i.category===activeCategory && i.subcategoryId===activeSubcategory);
+    frag.appendChild(renderItemsList(items));
+    board.appendChild(frag);
+    return;
+  }
+
+  // --- Category detail view ---
+  const head = document.createElement('div');
+  head.className = 'cat-detail-head';
+  head.innerHTML = `
+    <button class="back-btn">←</button>
+    <div class="cat-detail-title" style="background:${cat.color};color:var(--ink);">${cat.label}</div>
+  `;
+  head.querySelector('.back-btn').onclick = goBack;
+  frag.appendChild(head);
+
+  const subcats = state.subcategories.filter(s=>s.categoryId===activeCategory);
+
+  if(subcats.length > 0){
+    const subHeading = document.createElement('div');
+    subHeading.style.fontFamily = "'Baloo 2', sans-serif";
+    subHeading.style.fontWeight = '700';
+    subHeading.style.fontSize = '13px';
+    subHeading.style.color = 'var(--ink-muted)';
+    subHeading.style.margin = '4px 2px 8px';
+    subHeading.textContent = 'Underkategorier';
+    frag.appendChild(subHeading);
+
+    const subGrid = document.createElement('div');
+    subGrid.className = 'cat-buttons';
+    subGrid.style.marginBottom = '20px';
+
+    subcats.forEach(subcat=>{
+      const subItems = state.items.filter(i=>i.category===activeCategory && i.subcategoryId===subcat.id);
+      const overdue = subItems.filter(i=>i.dueDate && !i.completed && isOverdue(i.dueDate)).length;
+      let subText = subItems.length + ' post' + (subItems.length===1?'':'er');
+      if(overdue>0) subText += ' · ' + overdue + ' försenad' + (overdue===1?'':'e');
+
+      const wrap = document.createElement('div');
+      wrap.className = 'cat-button-wrap';
+
+      const btn = document.createElement('button');
+      btn.className = 'cat-button';
+      btn.style.background = cat.color;
+      btn.style.width = '100%';
+      btn.style.padding = '16px 18px';
+      btn.onclick = ()=>openSubcategory(subcat.id);
+      btn.innerHTML = `
+        <div>
+          <div class="cb-name" style="font-size:16px;">${escapeHtml(subcat.label)}</div>
+          <div class="cb-sub">${subText}</div>
+        </div>
+        <div class="cb-arrow">→</div>
+      `;
+      wrap.appendChild(btn);
+
+      const editBtn = document.createElement('button');
+      editBtn.className = 'cat-edit-btn';
+      editBtn.innerHTML = '✎';
+      editBtn.onclick = (e)=>{ e.stopPropagation(); openEditSubcategoryModal(subcat.id); };
+      wrap.appendChild(editBtn);
+
+      subGrid.appendChild(wrap);
+    });
+
+    frag.appendChild(subGrid);
+  }
+
+  const addSubBtn = document.createElement('button');
+  addSubBtn.className = 'add-cat-button';
+  addSubBtn.style.marginBottom = '20px';
+  addSubBtn.innerHTML = '+ Lägg till underkategori';
+  addSubBtn.onclick = ()=>openNewSubcategoryModal(activeCategory);
+  frag.appendChild(addSubBtn);
+
+  const ungrouped = state.items.filter(i=>i.category===activeCategory && !i.subcategoryId);
+
+  if(subcats.length > 0){
+    const heading = document.createElement('div');
+    heading.style.fontFamily = "'Baloo 2', sans-serif";
+    heading.style.fontWeight = '700';
+    heading.style.fontSize = '13px';
+    heading.style.color = 'var(--ink-muted)';
+    heading.style.margin = '4px 2px 8px';
+    heading.textContent = 'Övrigt';
+    frag.appendChild(heading);
+  }
+
+  frag.appendChild(renderItemsList(ungrouped));
+  board.appendChild(frag);
+}
+
+function renderItemCompact(item, cat){
+  if(item.type==='project' && !Array.isArray(item.subtasks)){
+    item.subtasks = [];
+  }
+  const div = document.createElement('div');
+  div.className = 'item-compact';
+  div.style.borderLeftColor = cat.color;
+  div.onclick = ()=>openDetail(item.id);
+
+  const overdue = item.dueDate && isOverdue(item.dueDate) && !item.completed;
+  const weekendFlag = cat.excludeFromNextUp && isWeekendDate(item.dueDate);
+
+  let rightHtml = '';
+  if(item.type==='project'){
+    const total = item.subtasks.length;
+    const done = item.subtasks.filter(s=>s.done).length;
+    if(total>0) rightHtml = `<div class="item-meta">${done}/${total}</div>`;
+  }else if(item.dueDate){
+    rightHtml = `<div class="item-meta ${(overdue||weekendFlag)?'overdue':''}">${fmtDate(item.dueDate)}</div>`;
+  }
+
+  const left = document.createElement('div');
+  left.className = 'ic-left';
+
+  if(item.type==='task'){
+    const checkBtn = document.createElement('button');
+    checkBtn.className = 'check-btn' + (item.completed?' checked':'');
+    checkBtn.innerHTML = '✓';
+    checkBtn.onclick = (e)=>{ e.stopPropagation(); toggleComplete(item.id); };
+    left.appendChild(checkBtn);
+  }else{
+    const dot = document.createElement('div');
+    dot.className = 'ic-dot';
+    dot.style.background = cat.color;
+    left.appendChild(dot);
+  }
+
+  const name = document.createElement('div');
+  name.className = 'item-name' + (item.completed?' done':'');
+  name.textContent = item.name;
+  left.appendChild(name);
+
+  if(item.attachments && item.attachments.length){
+    const clip = document.createElement('div');
+    clip.className = 'ic-attach-flag';
+    clip.innerHTML = '📎';
+    left.appendChild(clip);
+  }
+
+  div.appendChild(left);
+  if(rightHtml){
+    const rightWrap = document.createElement('div');
+    rightWrap.innerHTML = rightHtml;
+    div.appendChild(rightWrap.firstChild);
+  }
+
+  return div;
+}
+
+function openDetail(id){
+  const item = state.items.find(i=>i.id===id);
+  if(!item) return;
+  if(item.type==='project' && !Array.isArray(item.subtasks)) item.subtasks = [];
+  const cat = getCategory(item.category);
+  const overdue = item.dueDate && isOverdue(item.dueDate) && !item.completed;
+  const weekendFlag = cat.excludeFromNextUp && isWeekendDate(item.dueDate);
+
+  let metaText = item.dueDate ? fmtDate(item.dueDate) : 'Inget datum';
+  if(item.recurrence && item.recurrence!=='none'){
+    const map = {weekly:'varje vecka', monthly:'varje månad', quarterly:'var 3:e mån', yearly:'varje år'};
+    metaText += ' · återkommer ' + map[item.recurrence];
+  }
+
+  const body = document.getElementById('detailBody');
+  body.innerHTML = '';
+
+  const chip = document.createElement('div');
+  chip.className = 'cat-detail-title';
+  chip.style.background = cat.color;
+  chip.style.color = 'var(--ink)';
+  chip.style.display = 'inline-block';
+  chip.style.marginBottom = '12px';
+  chip.style.fontSize = '13px';
+  chip.textContent = cat.label;
+  body.appendChild(chip);
+
+  if(item.subcategoryId){
+    const subcat = state.subcategories.find(s=>s.id===item.subcategoryId);
+    if(subcat){
+      const subChip = document.createElement('span');
+      subChip.style.fontSize = '12px';
+      subChip.style.color = 'var(--ink-muted)';
+      subChip.style.marginLeft = '8px';
+      subChip.textContent = '› ' + subcat.label;
+      body.appendChild(subChip);
+    }
+  }
+
+  const title = document.createElement('h3');
+  title.style.margin = '0 0 8px';
+  if(item.completed){ title.style.textDecoration='line-through'; title.style.color='var(--ink-muted)'; }
+  title.textContent = item.name;
+  body.appendChild(title);
+
+  const meta = document.createElement('div');
+  meta.className = 'item-meta' + ((overdue||weekendFlag)?' overdue':'');
+  meta.style.display = 'inline-block';
+  meta.textContent = metaText;
+  body.appendChild(meta);
+
+  const customFields = cat.customFields || [];
+  if(customFields.length && item.customValues){
+    const cfWrap = document.createElement('div');
+    cfWrap.style.marginTop = '14px';
+    cfWrap.style.display = 'flex';
+    cfWrap.style.flexDirection = 'column';
+    cfWrap.style.gap = '6px';
+    customFields.forEach(f=>{
+      const val = item.customValues[f.id];
+      if(val===undefined || val==='') return;
+      const displayVal = f.type==='checkbox' ? (val ? 'Ja' : 'Nej') : (f.type==='date' ? fmtDate(val) : val);
+      const row = document.createElement('div');
+      row.style.fontSize = '14px';
+      row.innerHTML = `<span style="color:var(--ink-muted);font-weight:700;">${escapeHtml(f.label)}:</span> ${escapeHtml(String(displayVal))}`;
+      cfWrap.appendChild(row);
+    });
+    if(cfWrap.children.length) body.appendChild(cfWrap);
+  }
+
+  if(item.notes){
+    const notes = document.createElement('div');
+    notes.className = 'item-notes';
+    notes.style.marginTop = '14px';
+    notes.style.fontSize = '14px';
+    notes.style.lineHeight = '1.5';
+    notes.textContent = item.notes;
+    body.appendChild(notes);
+  }
+
+  if(item.attachments && item.attachments.length){
+    const attWrap = document.createElement('div');
+    attWrap.className = 'attachment-preview';
+    attWrap.style.marginTop = '16px';
+    item.attachments.forEach(a=>{
+      const thumb = document.createElement('div');
+      thumb.className = 'attach-thumb';
+      thumb.style.width = '76px';
+      thumb.style.height = '76px';
+      thumb.title = a.name;
+      thumb.innerHTML = a.type==='image' ? `<img src="${a.dataUrl}">` : '📄';
+      thumb.onclick = ()=>openAttachment(a);
+      attWrap.appendChild(thumb);
+    });
+    body.appendChild(attWrap);
+  }
+
+  if(item.type==='project'){
+    const total = item.subtasks.length;
+    const done = item.subtasks.filter(s=>s.done).length;
+    const pct = total>0 ? Math.round((done/total)*100) : 0;
+
+    const progWrap = document.createElement('div');
+    progWrap.className = 'progress-wrap';
+    progWrap.style.marginTop = '18px';
+    progWrap.innerHTML = `<div class="progress-bar" style="width:${pct}%;background:${cat.color}"></div>`;
+    body.appendChild(progWrap);
+
+    const subWrap = document.createElement('div');
+    subWrap.className = 'subtasks';
+    subWrap.style.marginTop = '10px';
+    item.subtasks.forEach(s=>{
+      const row = document.createElement('div');
+      row.className = 'subtask' + (s.done?' done':'');
+      row.innerHTML = `
+        <input type="checkbox" ${s.done?'checked':''} id="dsub-${s.id}">
+        <label for="dsub-${s.id}" style="flex:1">${escapeHtml(s.text)}</label>
+        <button class="icon-btn" style="width:20px;height:20px;font-size:11px;">✕</button>
+      `;
+      row.querySelector('input').onchange = ()=>{ toggleSubtask(item.id, s.id); openDetail(item.id); };
+      row.querySelector('button').onclick = ()=>{ deleteSubtask(item.id, s.id); openDetail(item.id); };
+      subWrap.appendChild(row);
+    });
+    body.appendChild(subWrap);
+
+    const addRow = document.createElement('div');
+    addRow.className = 'add-subtask-row';
+    addRow.innerHTML = `
+      <input type="text" placeholder="Lägg till delmoment...">
+      <button class="mini-btn">Lägg till</button>
+    `;
+    const input = addRow.querySelector('input');
+    const addBtn = addRow.querySelector('button');
+    const doAdd = ()=>{ addSubtask(item.id, input.value); input.value=''; openDetail(item.id); };
+    addBtn.onclick = doAdd;
+    input.onkeydown = (e)=>{ if(e.key==='Enter') doAdd(); };
+    body.appendChild(addRow);
+  }
+
+  const actions = document.getElementById('detailActions');
+  actions.innerHTML = '';
+
+  if(item.type==='task'){
+    const completeBtn = document.createElement('button');
+    completeBtn.className = 'add-btn';
+    completeBtn.textContent = item.completed ? 'Markera som ej klar' : 'Markera som klar';
+    completeBtn.onclick = ()=>{ toggleComplete(item.id); closeDetail(); };
+    actions.appendChild(completeBtn);
+  }
+
+  const editBtn = document.createElement('button');
+  editBtn.className = 'cancel-btn';
+  editBtn.textContent = 'Redigera';
+  editBtn.onclick = ()=>{ closeDetail(); editItem(item.id); };
+  actions.appendChild(editBtn);
+
+  const delBtn = document.createElement('button');
+  delBtn.className = 'delete-cat-btn';
+  delBtn.textContent = 'Ta bort';
+  delBtn.onclick = ()=>{ if(confirm('Ta bort "'+item.name+'"?')){ deleteItem(item.id); closeDetail(); } };
+  actions.appendChild(delBtn);
+
+  document.getElementById('detailOverlay').style.display = 'flex';
+}
+
+function closeDetail(){
+  document.getElementById('detailOverlay').style.display = 'none';
+}
+
+function render(){
+  document.getElementById('dateLine').textContent =
+    new Date().toLocaleDateString('sv-SE', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+  const showLists = !activeCategory;
+  document.querySelector('.nextup').style.display = showLists ? 'block' : 'none';
+  document.getElementById('secondaryRibbons').style.display = showLists ? 'block' : 'none';
+  if(showLists){
+    renderRibbon();
+    renderSecondaryRibbons();
+  }
+  renderBoard();
+}
+
+function setupSheetDrag(overlayId, closeFn){
+  const overlay = document.getElementById(overlayId);
+  const modal = overlay.querySelector('.modal');
+  const handle = overlay.querySelector('.sheet-handle');
+  if(!handle) return;
+
+  let startY = 0;
+  let dragging = false;
+
+  function getY(e){
+    return e.touches ? e.touches[0].clientY : e.clientY;
+  }
+
+  function onStart(e){
+    dragging = true;
+    startY = getY(e);
+    modal.style.transition = 'none';
+  }
+
+  function onMove(e){
+    if(!dragging) return;
+    const delta = getY(e) - startY;
+    if(delta > 0){
+      modal.style.transform = `translateY(${delta}px)`;
+    }
+  }
+
+  function onEnd(e){
+    if(!dragging) return;
+    dragging = false;
+    const delta = (e.changedTouches ? e.changedTouches[0].clientY : e.clientY) - startY;
+    modal.style.transition = '';
+    modal.style.transform = '';
+    if(delta > 90){
+      closeFn();
+    }
+  }
+
+  handle.addEventListener('touchstart', onStart, {passive:true});
+  handle.addEventListener('touchmove', onMove, {passive:true});
+  handle.addEventListener('touchend', onEnd);
+  handle.addEventListener('mousedown', onStart);
+  window.addEventListener('mousemove', onMove);
+  window.addEventListener('mouseup', onEnd);
+}
+
+setupSheetDrag('overlay', closeModal);
+setupSheetDrag('catOverlay', closeCatModal);
+setupSheetDrag('subcatOverlay', closeSubcatModal);
+setupSheetDrag('detailOverlay', closeDetail);
+
+function anyOverlayOpen(){
+  return ['overlay','catOverlay','subcatOverlay','detailOverlay'].some(id=>{
+    const el = document.getElementById(id);
+    return el && el.style.display === 'flex';
+  });
+}
+
+(function setupSwipeBack(){
+  let startX = 0, startY = 0, tracking = false, triggered = false;
+
+  function onStart(e){
+    if(anyOverlayOpen()){ tracking = false; return; }
+    if(!activeCategory){ tracking = false; return; }
+    if(e.target.closest('.ribbon')){ tracking = false; return; }
+    tracking = true;
+    triggered = false;
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+  }
+
+  function onMove(e){
+    if(!tracking || triggered) return;
+    const x = e.touches[0].clientX;
+    const y = e.touches[0].clientY;
+    const deltaX = x - startX;
+    const deltaY = y - startY;
+    if(deltaX < -60 && Math.abs(deltaY) < 70){
+      triggered = true;
+      tracking = false;
+      goBack();
+    }
+  }
+
+  function onEnd(){
+    tracking = false;
+  }
+
+  document.addEventListener('touchstart', onStart, {passive:true});
+  document.addEventListener('touchmove', onMove, {passive:true});
+  document.addEventListener('touchend', onEnd, {passive:true});
+  document.addEventListener('touchcancel', onEnd, {passive:true});
+})();
+
+loadState();
+</script>
+</body>
+</html>
