@@ -481,6 +481,12 @@
       <label>Namn</label>
       <input id="subcat-name" placeholder="T.ex. Häck">
     </div>
+    <div class="field" id="subcatScheduleFieldWrap" style="display:none;">
+      <label style="display:flex;align-items:center;gap:8px;">
+        <input type="checkbox" id="subcat-is-schedule" style="width:auto;">
+        Använd pass-formulär (tid/datum) istället för vanliga poster
+      </label>
+    </div>
     <div class="modal-actions" id="subcatModalActions">
       <button class="cancel-btn" onclick="closeSubcatModal()">Avbryt</button>
       <button class="add-btn" onclick="saveSubcategory()">Spara</button>
@@ -496,6 +502,18 @@
   </div>
 </div>
 
+<div class="overlay" id="confirmOverlay" style="display:none;" onclick="if(event.target===this) closeConfirm()">
+  <div class="modal" style="max-width:380px;">
+    <div class="sheet-handle"></div>
+    <h3>Är du säker?</h3>
+    <p id="confirmMessage" style="font-size:14.5px;color:var(--ink-muted);line-height:1.5;margin:0 0 4px;"></p>
+    <div class="modal-actions">
+      <button class="cancel-btn" onclick="closeConfirm()">Avbryt</button>
+      <button id="confirmActionBtn" onclick="confirmAction()" style="background:var(--coral-deep);color:#fff;border:none;border-radius:12px;padding:10px 16px;font-weight:700;font-size:14px;cursor:pointer;">Ta bort</button>
+    </div>
+  </div>
+</div>
+
 <div class="overlay" id="calendarOverlay" style="display:none;" onclick="if(event.target===this) closeCalendar()">
   <div class="modal" style="max-height:92vh;">
     <div class="sheet-handle"></div>
@@ -508,6 +526,7 @@
     <div class="cal-weekdays" id="calWeekdays"></div>
     <div class="cal-grid" id="calGrid"></div>
     <div class="cal-legend" id="calLegend"></div>
+    <button class="add-btn" style="width:100%;margin-top:16px;" onclick="exportCategoryToCalendar(calendarCategory)">📆 Lägg till i telefonens kalender</button>
   </div>
 </div>
 
@@ -580,8 +599,21 @@ function loadState(){
   seedHackData();
   seedJobSchedule();
   seedJobScheduleV2();
+  seedJobTasksSubcat();
   fixJobExcludeFlag();
   render();
+}
+
+function seedJobTasksSubcat(){
+  if(state.seedJobTasksV1) return;
+  const cat = state.categories.find(c=>c.label==='Jobb');
+  if(!cat){ state.seedJobTasksV1 = true; return; }
+  const exists = state.subcategories.some(s=>s.categoryId===cat.id && s.label==='Uppgifter');
+  if(!exists){
+    state.subcategories.push({ id: uid(), categoryId: cat.id, label: 'Uppgifter', isSchedule: false });
+  }
+  state.seedJobTasksV1 = true;
+  saveState();
 }
 
 function fixJobExcludeFlag(){
@@ -848,6 +880,26 @@ function closeLightbox(){
 
 function uid(){ return Math.random().toString(36).slice(2,10); }
 
+let confirmCallback = null;
+
+function showConfirm(message, onConfirm, confirmLabel){
+  document.getElementById('confirmMessage').textContent = message;
+  document.getElementById('confirmActionBtn').textContent = confirmLabel || 'Ta bort';
+  confirmCallback = onConfirm;
+  document.getElementById('confirmOverlay').style.display = 'flex';
+}
+
+function closeConfirm(){
+  document.getElementById('confirmOverlay').style.display = 'none';
+  confirmCallback = null;
+}
+
+function confirmAction(){
+  const cb = confirmCallback;
+  closeConfirm();
+  if(cb) cb();
+}
+
 function exportData(){
   const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
   const url = URL.createObjectURL(blob);
@@ -950,13 +1002,19 @@ function handleCategoryChange(catId){
   populateSubcategorySelect(catId, activeSubcategory && (getCategory(catId).id===activeCategory) ? activeSubcategory : '');
 }
 
+function isScheduleSubcategory(catId, subId){
+  const cat = getCategory(catId);
+  if(!cat.excludeFromNextUp) return false;
+  if(!subId) return true;
+  const sub = state.subcategories.find(s=>s.id===subId);
+  if(!sub) return true;
+  return sub.isSchedule !== false;
+}
+
 function handleFabClick(){
-  if(activeSubcategory){
-    const cat = getCategory(activeCategory);
-    if(cat.excludeFromNextUp){
-      openShiftModal();
-      return;
-    }
+  if(activeSubcategory && isScheduleSubcategory(activeCategory, activeSubcategory)){
+    openShiftModal();
+    return;
   }
   openModal();
 }
@@ -1059,17 +1117,16 @@ function saveShift(){
 }
 
 function deleteShiftFromModal(id){
-  if(confirm('Ta bort passet?')){
+  showConfirm('Ta bort passet?', ()=>{
     deleteItem(id);
     closeShiftModal();
-  }
+  });
 }
 
 function handleEditClick(id){
   const item = state.items.find(i=>i.id===id);
   if(!item) return;
-  const cat = getCategory(item.category);
-  if(cat.excludeFromNextUp && item.subcategoryId){
+  if(isScheduleSubcategory(item.category, item.subcategoryId)){
     closeDetail();
     editShift(id);
   }else{
@@ -1229,12 +1286,13 @@ function deleteCategory(catId){
     alert('Kategorin har underkategorier och kan inte tas bort. Ta bort dem först.');
     return;
   }
-  if(!confirm('Ta bort kategorin?')) return;
-  state.categories = state.categories.filter(c=>c.id!==catId);
-  if(activeCategory===catId) activeCategory=null;
-  saveState();
-  closeCatModal();
-  render();
+  showConfirm('Ta bort kategorin?', ()=>{
+    state.categories = state.categories.filter(c=>c.id!==catId);
+    if(activeCategory===catId) activeCategory=null;
+    saveState();
+    closeCatModal();
+    render();
+  });
 }
 
 function openNewSubcategoryModal(categoryId){
@@ -1242,6 +1300,14 @@ function openNewSubcategoryModal(categoryId){
   document.getElementById('subcatParentCategory').value=categoryId;
   document.getElementById('subcatModalTitle').textContent='Ny underkategori';
   document.getElementById('subcat-name').value='';
+  const cat = getCategory(categoryId);
+  const scheduleWrap = document.getElementById('subcatScheduleFieldWrap');
+  if(cat.excludeFromNextUp){
+    scheduleWrap.style.display = 'block';
+    document.getElementById('subcat-is-schedule').checked = true;
+  }else{
+    scheduleWrap.style.display = 'none';
+  }
   const actions = document.getElementById('subcatModalActions');
   actions.innerHTML = `
     <button class="cancel-btn" onclick="closeSubcatModal()">Avbryt</button>
@@ -1257,6 +1323,14 @@ function openEditSubcategoryModal(subId){
   document.getElementById('subcatParentCategory').value=subcat.categoryId;
   document.getElementById('subcatModalTitle').textContent='Redigera underkategori';
   document.getElementById('subcat-name').value=subcat.label;
+  const cat = getCategory(subcat.categoryId);
+  const scheduleWrap = document.getElementById('subcatScheduleFieldWrap');
+  if(cat.excludeFromNextUp){
+    scheduleWrap.style.display = 'block';
+    document.getElementById('subcat-is-schedule').checked = subcat.isSchedule !== false;
+  }else{
+    scheduleWrap.style.display = 'none';
+  }
   const hasItems = state.items.some(i=>i.subcategoryId===subId);
   const actions = document.getElementById('subcatModalActions');
   actions.innerHTML = `
@@ -1276,11 +1350,14 @@ function saveSubcategory(){
   if(!name) return;
   const editId = document.getElementById('editSubcatId').value;
   const categoryId = document.getElementById('subcatParentCategory').value;
+  const cat = getCategory(categoryId);
+  const isSchedule = cat.excludeFromNextUp ? document.getElementById('subcat-is-schedule').checked : false;
   if(editId){
     const subcat = state.subcategories.find(s=>s.id===editId);
     subcat.label = name;
+    subcat.isSchedule = isSchedule;
   }else{
-    state.subcategories.push({ id: uid(), categoryId, label: name });
+    state.subcategories.push({ id: uid(), categoryId, label: name, isSchedule });
   }
   saveState();
   closeSubcatModal();
@@ -1292,12 +1369,13 @@ function deleteSubcategory(subId){
     alert('Underkategorin innehåller poster och kan inte tas bort.');
     return;
   }
-  if(!confirm('Ta bort underkategorin?')) return;
-  state.subcategories = state.subcategories.filter(s=>s.id!==subId);
-  if(activeSubcategory===subId) activeSubcategory=null;
-  saveState();
-  closeSubcatModal();
-  render();
+  showConfirm('Ta bort underkategorin?', ()=>{
+    state.subcategories = state.subcategories.filter(s=>s.id!==subId);
+    if(activeSubcategory===subId) activeSubcategory=null;
+    saveState();
+    closeSubcatModal();
+    render();
+  });
 }
 
 function closeModal(){
@@ -1445,7 +1523,7 @@ function renderSecondaryRibbons(){
   const excludedCats = state.categories.filter(c=>c.excludeFromNextUp);
   excludedCats.forEach(cat=>{
     const items = state.items
-      .filter(i=>i.category===cat.id && i.dueDate && !i.completed)
+      .filter(i=>i.category===cat.id && i.dueDate && !i.completed && !isOverdue(i.dueDate))
       .sort((a,b)=> a.dueDate.localeCompare(b.dueDate))
       .slice(0,5);
     if(items.length===0) return;
@@ -1526,7 +1604,7 @@ function renderItemsList(items){
       fixBtn.className = 'icon-btn';
       fixBtn.innerHTML = '✕';
       fixBtn.title = 'Ta bort';
-      fixBtn.onclick = (e)=>{ e.stopPropagation(); if(confirm('Ta bort "'+(item.name||'posten')+'"?')) deleteItem(item.id); };
+      fixBtn.onclick = (e)=>{ e.stopPropagation(); showConfirm('Ta bort "'+(item.name||'posten')+'"?', ()=>deleteItem(item.id)); };
       errCard.appendChild(fixBtn);
       list.appendChild(errCard);
     }
@@ -1543,7 +1621,7 @@ function renderBoard(){
   if(!activeCategory){
     function buildCatTile(cat){
       const items = state.items.filter(i=>i.category===cat.id);
-      const overdue = items.filter(i=>i.dueDate && !i.completed && isOverdue(i.dueDate)).length;
+      const overdue = items.filter(i=>i.dueDate && !i.completed && isOverdue(i.dueDate) && !isScheduleSubcategory(cat.id, i.subcategoryId)).length;
       const subCount = state.subcategories.filter(s=>s.categoryId===cat.id).length;
       let sub = subCount>0 ? String(subCount) : String(items.length);
       if(overdue>0) sub += ' · ' + overdue + ' försenad' + (overdue===1?'':'e');
@@ -1577,6 +1655,17 @@ function renderBoard(){
     const normalCats = state.categories.filter(c=>!c.excludeFromNextUp);
     const separateCats = state.categories.filter(c=>c.excludeFromNextUp);
 
+    if(normalCats.length){
+      const privateHeading = document.createElement('div');
+      privateHeading.style.fontFamily = "'Baloo 2', sans-serif";
+      privateHeading.style.fontWeight = '700';
+      privateHeading.style.fontSize = '13px';
+      privateHeading.style.color = 'var(--ink-muted)';
+      privateHeading.style.margin = '4px 2px 8px';
+      privateHeading.textContent = 'Privat';
+      frag.appendChild(privateHeading);
+    }
+
     const grid = document.createElement('div');
     grid.className = 'cat-buttons';
     normalCats.forEach(cat=> grid.appendChild(buildCatTile(cat)));
@@ -1596,7 +1685,7 @@ function renderBoard(){
       heading.style.fontSize = '13px';
       heading.style.color = 'var(--ink-muted)';
       heading.style.margin = '22px 2px 8px';
-      heading.textContent = 'Fristående (visas ej i Kommande)';
+      heading.textContent = 'Arbete';
       frag.appendChild(heading);
 
       const sepGrid = document.createElement('div');
@@ -1628,7 +1717,10 @@ function renderBoard(){
     head.querySelector('.cat-edit-btn').onclick = ()=>openEditSubcategoryModal(subcat.id);
     frag.appendChild(head);
 
-    const items = state.items.filter(i=>i.category===activeCategory && i.subcategoryId===activeSubcategory);
+    let items = state.items.filter(i=>i.category===activeCategory && i.subcategoryId===activeSubcategory);
+    if(isScheduleSubcategory(activeCategory, activeSubcategory)){
+      items = items.filter(i=>!(i.dueDate && !i.completed && isOverdue(i.dueDate)));
+    }
     frag.appendChild(renderItemsList(items));
     board.appendChild(frag);
     return;
@@ -1662,9 +1754,15 @@ function renderBoard(){
 
     subcats.forEach(subcat=>{
       const subItems = state.items.filter(i=>i.category===activeCategory && i.subcategoryId===subcat.id);
-      const overdue = subItems.filter(i=>i.dueDate && !i.completed && isOverdue(i.dueDate)).length;
-      let subText = String(subItems.length);
-      if(overdue>0) subText += ' · ' + overdue + ' försenad' + (overdue===1?'':'e');
+      let subText;
+      if(isScheduleSubcategory(activeCategory, subcat.id)){
+        const visibleCount = subItems.filter(i=>!(i.dueDate && !i.completed && isOverdue(i.dueDate))).length;
+        subText = String(visibleCount);
+      }else{
+        const overdue = subItems.filter(i=>i.dueDate && !i.completed && isOverdue(i.dueDate)).length;
+        subText = String(subItems.length);
+        if(overdue>0) subText += ' · ' + overdue + ' försenad' + (overdue===1?'':'e');
+      }
 
       const wrap = document.createElement('div');
       wrap.className = 'cat-button-wrap';
@@ -1673,7 +1771,6 @@ function renderBoard(){
       btn.className = 'cat-button';
       btn.style.background = cat.color;
       btn.style.width = '100%';
-      btn.style.padding = '16px 18px';
       btn.onclick = ()=>openSubcategory(subcat.id);
       btn.innerHTML = `
         <div>
@@ -1940,7 +2037,7 @@ function openDetail(id){
   const delBtn = document.createElement('button');
   delBtn.className = 'delete-cat-btn';
   delBtn.textContent = 'Ta bort';
-  delBtn.onclick = ()=>{ if(confirm('Ta bort "'+item.name+'"?')){ deleteItem(item.id); closeDetail(); } };
+  delBtn.onclick = ()=>{ showConfirm('Ta bort "'+item.name+'"?', ()=>{ deleteItem(item.id); closeDetail(); }); };
   actions.appendChild(delBtn);
 
   document.getElementById('detailOverlay').style.display = 'flex';
@@ -1968,6 +2065,75 @@ function closeCalendar(){
 function calMonthShift(delta){
   calendarMonth.setMonth(calendarMonth.getMonth() + delta);
   renderCalendar();
+}
+
+function pad2(n){ return String(n).padStart(2,'0'); }
+
+function icsDateTime(dateStr, timeStr){
+  const [y,m,d] = dateStr.split('-');
+  const [hh,mm] = timeStr.split(':');
+  return `${y}${m}${d}T${hh}${mm}00`;
+}
+
+function icsEscape(text){
+  return String(text||'').replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\n/g,'\\n');
+}
+
+function itemToVEvent(item, cat){
+  const parts = (item.name || '').split('–');
+  let startTime = parts[0] ? parts[0].trim() : '00:00';
+  let endTime = parts[1] ? parts[1].trim() : '23:59';
+  if(endTime === '24:00') endTime = '23:59';
+
+  const [sh, sm] = startTime.split(':').map(Number);
+  const [eh, em] = endTime.split(':').map(Number);
+
+  const startDT = icsDateTime(item.dueDate, startTime);
+
+  let endDateObj = new Date(item.dueDate + 'T00:00:00');
+  if(eh < sh || (eh === sh && em <= sm)){
+    endDateObj.setDate(endDateObj.getDate() + 1);
+  }
+  const endDateStr = `${endDateObj.getFullYear()}-${pad2(endDateObj.getMonth()+1)}-${pad2(endDateObj.getDate())}`;
+  const endDT = icsDateTime(endDateStr, endTime);
+
+  const now = new Date();
+  const stamp = `${now.getUTCFullYear()}${pad2(now.getUTCMonth()+1)}${pad2(now.getUTCDate())}T${pad2(now.getUTCHours())}${pad2(now.getUTCMinutes())}${pad2(now.getUTCSeconds())}Z`;
+
+  const lines = [
+    'BEGIN:VEVENT',
+    'UID:' + item.id + '@husets-almanacka',
+    'DTSTAMP:' + stamp,
+    'DTSTART:' + startDT,
+    'DTEND:' + endDT,
+    'SUMMARY:' + icsEscape((cat.label || 'Pass') + ': ' + item.name)
+  ];
+  if(item.notes) lines.push('DESCRIPTION:' + icsEscape(item.notes));
+  lines.push('END:VEVENT');
+  return lines.join('\r\n');
+}
+
+function exportCategoryToCalendar(catId){
+  const cat = getCategory(catId);
+  const items = state.items.filter(i=>i.category===catId && i.dueDate);
+  if(items.length === 0){
+    alert('Inga pass att lägga till.');
+    return;
+  }
+  const events = items.map(i=>itemToVEvent(i, cat)).join('\r\n');
+  const ics = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Husets Almanacka//SV',
+    'CALSCALE:GREGORIAN',
+    events,
+    'END:VCALENDAR'
+  ].join('\r\n');
+
+  const blob = new Blob([ics], {type: 'text/calendar;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  window.open(url, '_blank');
+  setTimeout(()=>URL.revokeObjectURL(url), 60000);
 }
 
 function calGoToday(){
@@ -2139,9 +2305,10 @@ setupSheetDrag('subcatOverlay', closeSubcatModal);
 setupSheetDrag('detailOverlay', closeDetail);
 setupSheetDrag('calendarOverlay', closeCalendar);
 setupSheetDrag('shiftOverlay', closeShiftModal);
+setupSheetDrag('confirmOverlay', closeConfirm);
 
 function anyOverlayOpen(){
-  return ['overlay','catOverlay','subcatOverlay','detailOverlay','calendarOverlay','shiftOverlay'].some(id=>{
+  return ['overlay','catOverlay','subcatOverlay','detailOverlay','calendarOverlay','shiftOverlay','confirmOverlay'].some(id=>{
     const el = document.getElementById(id);
     return el && el.style.display === 'flex';
   });
