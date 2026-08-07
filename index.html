@@ -75,6 +75,34 @@
     text-transform:uppercase;letter-spacing:1.2px;color:var(--ink-muted);
     margin:0 0 10px 4px;
   }
+  .nextup-headrow{display:flex;align-items:center;justify-content:space-between;margin:0 4px 10px;}
+  .nextup-headrow h2{margin:0;}
+  .cal-btn{
+    background:var(--surface-soft);border:none;color:var(--ink);
+    border-radius:10px;padding:5px 10px;font-size:12px;font-weight:700;
+    cursor:pointer;font-family:'Nunito',sans-serif;
+  }
+  .cal-btn:hover{background:var(--border);}
+  .cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+  .cal-title{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:17px;text-transform:capitalize;}
+  .cal-today-btn{
+    display:block;background:none;border:none;color:var(--coral-deep);
+    font-size:12px;font-weight:700;cursor:pointer;margin:0 0 14px;padding:0 2px;
+  }
+  .cal-weekdays{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;font-size:11px;font-weight:700;color:var(--ink-muted);margin-bottom:6px;}
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;}
+  .cal-day{
+    aspect-ratio:0.85;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+    border-radius:10px;font-size:13px;font-weight:700;color:var(--ink);
+    background:var(--surface-soft);
+  }
+  .cal-day.empty{visibility:hidden;}
+  .cal-day.has-item{color:#fff;cursor:pointer;}
+  .cal-day.has-item:active{transform:scale(0.92);}
+  .cal-day.cal-today{box-shadow:0 0 0 2.5px var(--amber-deep);}
+  .cal-day-time{font-size:8.5px;font-weight:600;opacity:0.9;letter-spacing:-0.2px;}
+  .cal-legend{display:flex;align-items:center;gap:8px;margin-top:16px;font-size:12px;color:var(--ink-muted);}
+  .cal-legend-dot{width:12px;height:12px;border-radius:4px;}
   .ribbon{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 8px;}
   .ribbon-card{
     flex:0 0 auto;min-width:170px;background:var(--surface);
@@ -166,7 +194,16 @@
   .item-name.done{text-decoration:line-through;color:var(--ink-muted);}
   .item-meta{font-family:'Nunito',sans-serif;font-weight:600;font-size:11.5px;color:var(--ink-muted);white-space:nowrap;background:var(--surface-soft);padding:3px 9px;border-radius:9px;}
   .item-meta.overdue{color:#fff;background:var(--coral-deep);font-weight:700;}
-  .item-notes{font-size:13px;color:var(--ink-muted);}
+  .item-notes{
+    font-size:15.5px;line-height:1.6;color:var(--ink);
+    background:var(--surface-soft);border-radius:14px;
+    padding:14px 16px;white-space:pre-wrap;
+  }
+  .notes-label{
+    font-family:'Baloo 2',sans-serif;font-weight:700;font-size:12px;
+    text-transform:uppercase;letter-spacing:0.6px;color:var(--ink-muted);
+    margin:18px 0 8px 2px;
+  }
   .item-actions{display:flex;gap:8px;align-items:center;}
   .icon-btn{
     background:var(--surface-soft);border:none;color:var(--ink-muted);
@@ -299,7 +336,45 @@
   <div class="board" id="board"></div>
 </div>
 
-<button class="fab" onclick="openModal()" title="Ny post">+</button>
+<button class="fab" onclick="handleFabClick()" title="Nytt">+</button>
+
+<div class="overlay" id="shiftOverlay" style="display:none;" onclick="if(event.target===this) closeShiftModal()">
+  <div class="modal">
+    <div class="sheet-handle"></div>
+    <h3 id="shiftModalTitle">Nytt pass</h3>
+    <input type="hidden" id="editShiftId">
+    <div class="field">
+      <label>Datum</label>
+      <input type="date" id="shift-date">
+    </div>
+    <div class="field">
+      <label>Snabbval</label>
+      <div class="toggle-row">
+        <div class="toggle-opt" onclick="setShiftPreset('day', this)">Dag<br><span style="font-size:10.5px;opacity:0.8;">08-17</span></div>
+        <div class="toggle-opt" onclick="setShiftPreset('half', this)">Halvkväll<br><span style="font-size:10.5px;opacity:0.8;">12-21</span></div>
+        <div class="toggle-opt" onclick="setShiftPreset('evening', this)">Kväll<br><span style="font-size:10.5px;opacity:0.8;">15-24</span></div>
+      </div>
+    </div>
+    <div class="field" style="display:flex;gap:10px;">
+      <div style="flex:1;">
+        <label style="display:block;font-size:12.5px;font-weight:700;color:var(--ink-muted);margin-bottom:5px;">Starttid</label>
+        <input type="time" id="shift-start">
+      </div>
+      <div style="flex:1;">
+        <label style="display:block;font-size:12.5px;font-weight:700;color:var(--ink-muted);margin-bottom:5px;">Sluttid</label>
+        <input type="time" id="shift-end">
+      </div>
+    </div>
+    <div class="field">
+      <label>Anteckning (valfritt)</label>
+      <textarea id="shift-notes" placeholder="T.ex. enhet, kod, extra info..."></textarea>
+    </div>
+    <div class="modal-actions" id="shiftModalActions">
+      <button class="cancel-btn" onclick="closeShiftModal()">Avbryt</button>
+      <button class="add-btn" onclick="saveShift()">Spara</button>
+    </div>
+  </div>
+</div>
 
 <div class="lightbox" id="lightbox" style="display:none;" onclick="closeLightbox()">
   <img id="lightboxImg" src="" onclick="event.stopPropagation()">
@@ -418,6 +493,21 @@
     <div class="sheet-handle"></div>
     <div id="detailBody"></div>
     <div class="modal-actions" id="detailActions" style="flex-wrap:wrap;"></div>
+  </div>
+</div>
+
+<div class="overlay" id="calendarOverlay" style="display:none;" onclick="if(event.target===this) closeCalendar()">
+  <div class="modal" style="max-height:92vh;">
+    <div class="sheet-handle"></div>
+    <div class="cal-header">
+      <button class="back-btn" onclick="calMonthShift(-1)">‹</button>
+      <div class="cal-title" id="calTitle"></div>
+      <button class="back-btn" onclick="calMonthShift(1)">›</button>
+    </div>
+    <button class="cal-today-btn" id="calTodayBtn" onclick="calGoToday()">↺ Gå till idag</button>
+    <div class="cal-weekdays" id="calWeekdays"></div>
+    <div class="cal-grid" id="calGrid"></div>
+    <div class="cal-legend" id="calLegend"></div>
   </div>
 </div>
 
@@ -860,6 +950,134 @@ function handleCategoryChange(catId){
   populateSubcategorySelect(catId, activeSubcategory && (getCategory(catId).id===activeCategory) ? activeSubcategory : '');
 }
 
+function handleFabClick(){
+  if(activeSubcategory){
+    const cat = getCategory(activeCategory);
+    if(cat.excludeFromNextUp){
+      openShiftModal();
+      return;
+    }
+  }
+  openModal();
+}
+
+const SHIFT_PRESETS = {
+  day:     ['08:00','17:00'],
+  evening: ['15:00','23:59'],
+  half:    ['12:00','21:00']
+};
+
+function setShiftPreset(type, el){
+  const p = SHIFT_PRESETS[type];
+  if(!p) return;
+  document.getElementById('shift-start').value = p[0];
+  document.getElementById('shift-end').value = p[1];
+  document.querySelectorAll('#shiftOverlay .toggle-opt').forEach(o=>o.classList.remove('active'));
+  if(el) el.classList.add('active');
+}
+
+function highlightMatchingPreset(start, end){
+  const opts = document.querySelectorAll('#shiftOverlay .toggle-opt');
+  opts.forEach(o=>o.classList.remove('active'));
+  const order = ['day','half','evening'];
+  const match = order.find(k=>SHIFT_PRESETS[k][0]===start && SHIFT_PRESETS[k][1]===end);
+  if(match){
+    const domIdx = order.indexOf(match);
+    if(opts[domIdx]) opts[domIdx].classList.add('active');
+  }
+}
+
+function openShiftModal(){
+  document.getElementById('editShiftId').value = '';
+  document.getElementById('shiftModalTitle').textContent = 'Nytt pass';
+  document.getElementById('shift-date').value = todayISO();
+  document.getElementById('shift-start').value = '';
+  document.getElementById('shift-end').value = '';
+  document.getElementById('shift-notes').value = '';
+  highlightMatchingPreset('', '');
+  document.getElementById('shiftModalActions').innerHTML = `
+    <button class="cancel-btn" onclick="closeShiftModal()">Avbryt</button>
+    <button class="add-btn" onclick="saveShift()">Spara</button>
+  `;
+  document.getElementById('shiftOverlay').style.display = 'flex';
+}
+
+function editShift(id){
+  const item = state.items.find(i=>i.id===id);
+  if(!item) return;
+  document.getElementById('editShiftId').value = id;
+  document.getElementById('shiftModalTitle').textContent = 'Redigera pass';
+  document.getElementById('shift-date').value = item.dueDate || todayISO();
+  const parts = (item.name || '').split('–');
+  const startVal = parts[0] ? parts[0].trim() : '';
+  const endVal = parts[1] ? parts[1].trim() : '';
+  document.getElementById('shift-start').value = startVal;
+  document.getElementById('shift-end').value = endVal;
+  document.getElementById('shift-notes').value = item.notes || '';
+  highlightMatchingPreset(startVal, endVal);
+  document.getElementById('shiftModalActions').innerHTML = `
+    <button class="delete-cat-btn" onclick="deleteShiftFromModal('${id}')">Ta bort</button>
+    <button class="cancel-btn" onclick="closeShiftModal()">Avbryt</button>
+    <button class="add-btn" onclick="saveShift()">Spara</button>
+  `;
+  document.getElementById('shiftOverlay').style.display = 'flex';
+}
+
+function closeShiftModal(){
+  document.getElementById('shiftOverlay').style.display = 'none';
+}
+
+function saveShift(){
+  const date = document.getElementById('shift-date').value;
+  const start = document.getElementById('shift-start').value;
+  const end = document.getElementById('shift-end').value;
+  if(!date || !start || !end){
+    alert('Fyll i datum, starttid och sluttid.');
+    return;
+  }
+  const id = document.getElementById('editShiftId').value;
+  const data = {
+    category: activeCategory,
+    subcategoryId: activeSubcategory,
+    dueDate: date,
+    recurrence: 'none',
+    notes: document.getElementById('shift-notes').value.trim(),
+    name: start + '–' + end,
+    type: 'task',
+    attachments: [],
+    customValues: {}
+  };
+  if(id){
+    const item = state.items.find(i=>i.id===id);
+    Object.assign(item, data);
+  }else{
+    state.items.push({ id: uid(), ...data, completed: false });
+  }
+  saveState();
+  closeShiftModal();
+  render();
+}
+
+function deleteShiftFromModal(id){
+  if(confirm('Ta bort passet?')){
+    deleteItem(id);
+    closeShiftModal();
+  }
+}
+
+function handleEditClick(id){
+  const item = state.items.find(i=>i.id===id);
+  if(!item) return;
+  const cat = getCategory(item.category);
+  if(cat.excludeFromNextUp && item.subcategoryId){
+    closeDetail();
+    editShift(id);
+  }else{
+    closeDetail();
+    editItem(id);
+  }
+}
+
 function openModal(prefillCat){
   document.getElementById('editId').value='';
   document.getElementById('modalTitle').textContent='Ny post';
@@ -1235,9 +1453,20 @@ function renderSecondaryRibbons(){
     const section = document.createElement('div');
     section.className = 'nextup';
     section.style.marginTop = '4px';
+
+    const headRow = document.createElement('div');
+    headRow.className = 'nextup-headrow';
     const heading = document.createElement('h2');
     heading.textContent = cat.label;
-    section.appendChild(heading);
+    headRow.appendChild(heading);
+
+    const calBtn = document.createElement('button');
+    calBtn.className = 'cal-btn';
+    calBtn.innerHTML = '📅 Kalender';
+    calBtn.onclick = ()=>openCalendar(cat.id);
+    headRow.appendChild(calBtn);
+
+    section.appendChild(headRow);
 
     const ribbon = document.createElement('div');
     ribbon.className = 'ribbon';
@@ -1315,7 +1544,8 @@ function renderBoard(){
     function buildCatTile(cat){
       const items = state.items.filter(i=>i.category===cat.id);
       const overdue = items.filter(i=>i.dueDate && !i.completed && isOverdue(i.dueDate)).length;
-      let sub = String(items.length);
+      const subCount = state.subcategories.filter(s=>s.categoryId===cat.id).length;
+      let sub = subCount>0 ? String(subCount) : String(items.length);
       if(overdue>0) sub += ' · ' + overdue + ' försenad' + (overdue===1?'':'e');
 
       const wrap = document.createElement('div');
@@ -1620,11 +1850,13 @@ function openDetail(id){
   }
 
   if(item.notes){
+    const label = document.createElement('div');
+    label.className = 'notes-label';
+    label.textContent = 'Anteckningar';
+    body.appendChild(label);
+
     const notes = document.createElement('div');
     notes.className = 'item-notes';
-    notes.style.marginTop = '14px';
-    notes.style.fontSize = '14px';
-    notes.style.lineHeight = '1.5';
     notes.textContent = item.notes;
     body.appendChild(notes);
   }
@@ -1702,7 +1934,7 @@ function openDetail(id){
   const editBtn = document.createElement('button');
   editBtn.className = 'cancel-btn';
   editBtn.textContent = 'Redigera';
-  editBtn.onclick = ()=>{ closeDetail(); editItem(item.id); };
+  editBtn.onclick = ()=>{ handleEditClick(item.id); };
   actions.appendChild(editBtn);
 
   const delBtn = document.createElement('button');
@@ -1716,6 +1948,112 @@ function openDetail(id){
 
 function closeDetail(){
   document.getElementById('detailOverlay').style.display = 'none';
+}
+
+let calendarCategory = null;
+let calendarMonth = null;
+
+function openCalendar(catId){
+  calendarCategory = catId;
+  const now = new Date();
+  calendarMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  renderCalendar();
+  document.getElementById('calendarOverlay').style.display = 'flex';
+}
+
+function closeCalendar(){
+  document.getElementById('calendarOverlay').style.display = 'none';
+}
+
+function calMonthShift(delta){
+  calendarMonth.setMonth(calendarMonth.getMonth() + delta);
+  renderCalendar();
+}
+
+function calGoToday(){
+  const now = new Date();
+  calendarMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  renderCalendar();
+}
+
+function compactTimeLabel(name){
+  if(!name) return '';
+  const parts = name.split('–');
+  if(parts.length !== 2) return name.length > 8 ? name.slice(0,8) : name;
+  const strip = (t)=> t.trim().endsWith(':00') ? t.trim().slice(0,-3) : t.trim();
+  return strip(parts[0]) + '-' + strip(parts[1]);
+}
+
+function renderCalendar(){
+  const cat = getCategory(calendarCategory);
+
+  const title = document.getElementById('calTitle');
+  title.textContent = calendarMonth.toLocaleDateString('sv-SE', {month:'long', year:'numeric'});
+
+  const now = new Date();
+  const isCurrentMonth = calendarMonth.getFullYear()===now.getFullYear() && calendarMonth.getMonth()===now.getMonth();
+  document.getElementById('calTodayBtn').style.display = isCurrentMonth ? 'none' : 'block';
+
+  const weekdaysEl = document.getElementById('calWeekdays');
+  weekdaysEl.innerHTML = ['Mån','Tis','Ons','Tor','Fre','Lör','Sön'].map(w=>`<div>${w}</div>`).join('');
+
+  const grid = document.getElementById('calGrid');
+  grid.innerHTML = '';
+
+  const year = calendarMonth.getFullYear();
+  const month = calendarMonth.getMonth();
+  const firstDay = new Date(year, month, 1);
+  const startOffset = (firstDay.getDay() + 6) % 7;
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  const itemsByDate = {};
+  state.items.filter(i=>i.category===calendarCategory && i.dueDate).forEach(i=>{
+    (itemsByDate[i.dueDate] = itemsByDate[i.dueDate] || []).push(i);
+  });
+
+  for(let i=0; i<startOffset; i++){
+    const empty = document.createElement('div');
+    empty.className = 'cal-day empty';
+    grid.appendChild(empty);
+  }
+
+  for(let d=1; d<=daysInMonth; d++){
+    const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const dayItems = itemsByDate[dateStr] || [];
+    const dow = new Date(year, month, d).getDay();
+    const weekend = dow===0 || dow===6;
+
+    const cell = document.createElement('div');
+    cell.className = 'cal-day';
+    if(dateStr === todayISO()) cell.classList.add('cal-today');
+
+    const dayNum = document.createElement('div');
+    dayNum.textContent = d;
+    cell.appendChild(dayNum);
+
+    if(dayItems.length){
+      cell.classList.add('has-item');
+      cell.style.background = weekend ? 'var(--coral-deep)' : cat.color;
+      if(!weekend) cell.style.color = 'var(--ink)';
+      cell.onclick = ()=>{ closeCalendar(); openDetail(dayItems[0].id); };
+      cell.title = dayItems.map(i=>i.name).join(', ');
+
+      const timeLabel = document.createElement('div');
+      timeLabel.className = 'cal-day-time';
+      timeLabel.textContent = compactTimeLabel(dayItems[0].name);
+      cell.appendChild(timeLabel);
+    }else if(weekend){
+      cell.style.color = 'var(--coral-deep)';
+    }
+
+    grid.appendChild(cell);
+  }
+
+  const legend = document.getElementById('calLegend');
+  legend.innerHTML = `
+    <div class="cal-legend-dot" style="background:${cat.color}"></div> Pass
+    <div class="cal-legend-dot" style="background:var(--coral-deep);margin-left:14px;"></div> Helgpass
+  `;
 }
 
 function render(){
@@ -1734,18 +2072,24 @@ function render(){
 function setupSheetDrag(overlayId, closeFn){
   const overlay = document.getElementById(overlayId);
   const modal = overlay.querySelector('.modal');
-  const handle = overlay.querySelector('.sheet-handle');
-  if(!handle) return;
+  if(!modal) return;
 
   let startY = 0;
   let dragging = false;
+  let engaged = false;
 
   function getY(e){
     return e.touches ? e.touches[0].clientY : e.clientY;
   }
 
+  function isInteractive(target){
+    return target.closest('input, textarea, select, button, a, .attach-thumb, .swatch, .toggle-opt, .cal-day, .subtask, .add-subtask-row');
+  }
+
   function onStart(e){
+    if(isInteractive(e.target)){ dragging = false; engaged = false; return; }
     dragging = true;
+    engaged = false;
     startY = getY(e);
     modal.style.transition = 'none';
   }
@@ -1753,14 +2097,26 @@ function setupSheetDrag(overlayId, closeFn){
   function onMove(e){
     if(!dragging) return;
     const delta = getY(e) - startY;
+    if(!engaged){
+      if(delta > 8 && modal.scrollTop <= 0){
+        engaged = true;
+      }else if(delta < -5 || modal.scrollTop > 0){
+        dragging = false;
+        return;
+      }else{
+        return;
+      }
+    }
+    if(engaged && e.cancelable) e.preventDefault();
     if(delta > 0){
       modal.style.transform = `translateY(${delta}px)`;
     }
   }
 
   function onEnd(e){
-    if(!dragging) return;
+    if(!dragging || !engaged){ dragging = false; engaged = false; return; }
     dragging = false;
+    engaged = false;
     const delta = (e.changedTouches ? e.changedTouches[0].clientY : e.clientY) - startY;
     modal.style.transition = '';
     modal.style.transform = '';
@@ -1769,10 +2125,10 @@ function setupSheetDrag(overlayId, closeFn){
     }
   }
 
-  handle.addEventListener('touchstart', onStart, {passive:true});
-  handle.addEventListener('touchmove', onMove, {passive:true});
-  handle.addEventListener('touchend', onEnd);
-  handle.addEventListener('mousedown', onStart);
+  modal.addEventListener('touchstart', onStart, {passive:true});
+  modal.addEventListener('touchmove', onMove, {passive:false});
+  modal.addEventListener('touchend', onEnd);
+  modal.addEventListener('mousedown', onStart);
   window.addEventListener('mousemove', onMove);
   window.addEventListener('mouseup', onEnd);
 }
@@ -1781,16 +2137,21 @@ setupSheetDrag('overlay', closeModal);
 setupSheetDrag('catOverlay', closeCatModal);
 setupSheetDrag('subcatOverlay', closeSubcatModal);
 setupSheetDrag('detailOverlay', closeDetail);
+setupSheetDrag('calendarOverlay', closeCalendar);
+setupSheetDrag('shiftOverlay', closeShiftModal);
 
 function anyOverlayOpen(){
-  return ['overlay','catOverlay','subcatOverlay','detailOverlay'].some(id=>{
+  return ['overlay','catOverlay','subcatOverlay','detailOverlay','calendarOverlay','shiftOverlay'].some(id=>{
     const el = document.getElementById(id);
     return el && el.style.display === 'flex';
   });
 }
 
 (function setupSwipeBack(){
-  let startX = 0, startY = 0, tracking = false, triggered = false;
+  let startX = 0, startY = 0, tracking = false, triggered = false, isDragging = false;
+  const THRESHOLD = 90;
+
+  function board(){ return document.getElementById('board'); }
 
   function onStart(e){
     if(anyOverlayOpen()){ tracking = false; return; }
@@ -1798,8 +2159,10 @@ function anyOverlayOpen(){
     if(e.target.closest('.ribbon')){ tracking = false; return; }
     tracking = true;
     triggered = false;
+    isDragging = false;
     startX = e.touches[0].clientX;
     startY = e.touches[0].clientY;
+    board().style.transition = 'none';
   }
 
   function onMove(e){
@@ -1808,15 +2171,41 @@ function anyOverlayOpen(){
     const y = e.touches[0].clientY;
     const deltaX = x - startX;
     const deltaY = y - startY;
-    if(deltaX < -60 && Math.abs(deltaY) < 70){
-      triggered = true;
-      tracking = false;
-      goBack();
+    if(!isDragging){
+      if(Math.abs(deltaX) < 10) return;
+      if(Math.abs(deltaY) > Math.abs(deltaX)) { tracking = false; return; }
+      isDragging = true;
+    }
+    if(deltaX > 0){
+      const damped = Math.min(deltaX * 0.7, 140);
+      const b = board();
+      b.style.transform = `translateX(${damped}px)`;
+      b.style.opacity = String(1 - damped/280);
     }
   }
 
-  function onEnd(){
+  function onEnd(e){
+    if(!tracking){ return; }
     tracking = false;
+    if(!isDragging) return;
+    const endX = (e.changedTouches ? e.changedTouches[0].clientX : startX);
+    const deltaX = endX - startX;
+    const b = board();
+    b.style.transition = 'transform 0.25s ease-out, opacity 0.25s ease-out';
+    if(deltaX > THRESHOLD){
+      triggered = true;
+      b.style.transform = 'translateX(100%)';
+      b.style.opacity = '0';
+      setTimeout(()=>{
+        goBack();
+        b.style.transition = 'none';
+        b.style.transform = '';
+        b.style.opacity = '';
+      }, 220);
+    }else{
+      b.style.transform = '';
+      b.style.opacity = '';
+    }
   }
 
   document.addEventListener('touchstart', onStart, {passive:true});
