@@ -2154,11 +2154,12 @@ function exportCategoryToCalendar(catId){
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
-  link.target = '_self';
+  link.download = cat.label.replace(/\s+/g,'_') + '.ics';
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
   setTimeout(()=>URL.revokeObjectURL(url), 60000);
+  alert('Kalenderfilen har sparats. Öppna Filer-appen, hitta filen (oftast under "Nedladdat"), och tryck på den för att lägga till passen i Kalender.');
 }
 
 function calGoToday(){
