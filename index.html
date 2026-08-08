@@ -244,6 +244,8 @@
     padding:0;
   }
   #confirmOverlay{z-index:80;}
+  #detailOverlay{z-index:70;}
+  #shiftOverlay{z-index:70;}
   @keyframes sheetUp{
     from{transform:translateY(24px);opacity:0.6;}
     to{transform:translateY(0);opacity:1;}
@@ -1211,10 +1213,10 @@ function highlightMatchingPreset(start, end){
   }
 }
 
-function openShiftModal(){
+function openShiftModal(prefillDate){
   document.getElementById('editShiftId').value = '';
   document.getElementById('shiftModalTitle').textContent = 'Nytt pass';
-  document.getElementById('shift-date').value = todayISO();
+  document.getElementById('shift-date').value = prefillDate || todayISO();
   document.getElementById('shift-start').value = '';
   document.getElementById('shift-end').value = '';
   document.getElementById('shift-notes').value = '';
@@ -1224,6 +1226,22 @@ function openShiftModal(){
     <button class="add-btn" onclick="saveShift()">Spara</button>
   `;
   document.getElementById('shiftOverlay').style.display = 'flex';
+}
+
+function findScheduleSubcategory(catId){
+  const sub = state.subcategories.find(s=>s.categoryId===catId && s.isSchedule !== false);
+  return sub ? sub.id : null;
+}
+
+function openShiftModalForCalendar(dateStr){
+  const subId = findScheduleSubcategory(calendarCategory);
+  if(!subId){
+    alert('Hittar ingen schema-underkategori i den här kategorin.');
+    return;
+  }
+  activeCategory = calendarCategory;
+  activeSubcategory = subId;
+  openShiftModal(dateStr);
 }
 
 function editShift(id){
@@ -1280,12 +1298,21 @@ function saveShift(){
   saveState();
   closeShiftModal();
   render();
+  refreshCalendarIfOpen();
+}
+
+function refreshCalendarIfOpen(){
+  const overlay = document.getElementById('calendarOverlay');
+  if(overlay && overlay.style.display === 'flex'){
+    renderCalendar();
+  }
 }
 
 function deleteShiftFromModal(id){
   showConfirm('Ta bort passet?', ()=>{
     deleteItem(id);
     closeShiftModal();
+    refreshCalendarIfOpen();
   });
 }
 
@@ -2190,7 +2217,7 @@ function openDetail(id){
     const completeBtn = document.createElement('button');
     completeBtn.className = 'add-btn';
     completeBtn.textContent = item.completed ? 'Markera som ej klar' : 'Markera som klar';
-    completeBtn.onclick = ()=>{ toggleComplete(item.id); closeDetail(); };
+    completeBtn.onclick = ()=>{ toggleComplete(item.id); closeDetail(); refreshCalendarIfOpen(); };
     actions.appendChild(completeBtn);
   }
 
@@ -2203,7 +2230,7 @@ function openDetail(id){
   const delBtn = document.createElement('button');
   delBtn.className = 'delete-cat-btn';
   delBtn.textContent = 'Ta bort';
-  delBtn.onclick = ()=>{ showConfirm('Ta bort "'+item.name+'"?', ()=>{ deleteItem(item.id); closeDetail(); }); };
+  delBtn.onclick = ()=>{ showConfirm('Ta bort "'+item.name+'"?', ()=>{ deleteItem(item.id); closeDetail(); refreshCalendarIfOpen(); }); };
   actions.appendChild(delBtn);
 
   document.getElementById('detailOverlay').style.display = 'flex';
@@ -2298,15 +2325,17 @@ function renderCalendar(){
       cell.classList.add('has-item');
       cell.style.background = weekend ? 'var(--coral-deep)' : cat.color;
       if(!weekend) cell.style.color = 'var(--ink)';
-      cell.onclick = ()=>{ closeCalendar(); openDetail(dayItems[0].id); };
+      cell.onclick = ()=>{ openDetail(dayItems[0].id); };
       cell.title = dayItems.map(i=>i.name).join(', ');
 
       const timeLabel = document.createElement('div');
       timeLabel.className = 'cal-day-time';
       timeLabel.textContent = compactTimeLabel(dayItems[0].name);
       cell.appendChild(timeLabel);
-    }else if(weekend){
-      cell.style.color = 'var(--coral-deep)';
+    }else{
+      if(weekend) cell.style.color = 'var(--coral-deep)';
+      cell.style.cursor = 'pointer';
+      cell.onclick = ()=>{ openShiftModalForCalendar(dateStr); };
     }
 
     grid.appendChild(cell);
