@@ -527,6 +527,7 @@
         <li>Tryck "Kopiera länk" nedan</li>
         <li>Öppna <b>Safari</b>-appen själv</li>
         <li>Tryck i adressfältet och klistra in</li>
+        <li>Kalendervyn öppnas automatiskt – tryck på kalenderknappen där</li>
       </ol>
     </div>
     <input id="safariQrLink" readonly style="margin-bottom:14px;font-size:12px;" onclick="this.select()">
@@ -2234,7 +2235,7 @@ function checkAutoExport(){
   history.replaceState(null, '', location.pathname);
   setTimeout(()=>{
     if(state.categories.some(c=>c.id===exportCat)){
-      doExportCalendar(exportCat);
+      openCalendar(exportCat);
     }
   }, 500);
 }
