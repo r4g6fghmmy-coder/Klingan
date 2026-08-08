@@ -119,12 +119,13 @@
   .cat-buttons{display:flex;flex-direction:column;gap:12px;}
   .cat-button{
     display:flex;justify-content:space-between;align-items:center;
-    padding:22px 56px 22px 20px;border-radius:20px;border:none;cursor:pointer;
+    padding:22px 56px 22px 20px;border-radius:20px;
+    border:1.5px solid rgba(62,62,92,0.18);cursor:pointer;
     text-align:left;color:var(--ink);font-family:'Nunito',sans-serif;
-    box-shadow:var(--shadow-sm);
-    transition:transform 0.12s, box-shadow 0.12s;
+    box-shadow:none;
+    transition:transform 0.12s, border-color 0.12s;
   }
-  .cat-button:hover{transform:translateY(-2px);box-shadow:var(--shadow);}
+  .cat-button:hover{transform:translateY(-2px);border-color:rgba(62,62,92,0.32);}
   .cat-button:active{transform:translateY(0);}
   .cat-button .cb-name{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:19px;}
   .cat-button .cb-sub{font-family:'Nunito',sans-serif;font-weight:600;font-size:12px;opacity:0.7;margin-top:3px;}
@@ -1816,7 +1817,7 @@ function renderBoard(){
       const items = state.items.filter(i=>i.category===cat.id);
       const overdue = items.filter(i=>i.dueDate && !i.completed && isOverdue(i.dueDate) && !isScheduleSubcategory(cat.id, i.subcategoryId)).length;
       const subCount = state.subcategories.filter(s=>s.categoryId===cat.id).length;
-      let sub = subCount>0 ? String(subCount) : String(items.length);
+      let sub = subCount>0 ? String(subCount) + ' st' : String(items.length) + ' st';
       if(overdue>0) sub += ' · ' + overdue + ' försenad' + (overdue===1?'':'e');
 
       const wrap = document.createElement('div');
@@ -1950,10 +1951,10 @@ function renderBoard(){
       let subText;
       if(isScheduleSubcategory(activeCategory, subcat.id)){
         const visibleCount = subItems.filter(i=>!(i.dueDate && !i.completed && isOverdue(i.dueDate))).length;
-        subText = String(visibleCount);
+        subText = String(visibleCount) + ' st';
       }else{
         const overdue = subItems.filter(i=>i.dueDate && !i.completed && isOverdue(i.dueDate)).length;
-        subText = String(subItems.length);
+        subText = String(subItems.length) + ' st';
         if(overdue>0) subText += ' · ' + overdue + ' försenad' + (overdue===1?'':'e');
       }
 
