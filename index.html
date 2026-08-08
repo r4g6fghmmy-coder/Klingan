@@ -304,14 +304,21 @@
     display:flex;align-items:center;justify-content:center;
   }
   .lightbox{
-    position:fixed;inset:0;background:rgba(20,20,40,0.85);z-index:100;
-    display:flex;align-items:center;justify-content:center;padding:30px;
+    position:fixed;inset:0;background:#000;z-index:100;
+    display:flex;align-items:center;justify-content:center;padding:0;
+    overflow:hidden;
   }
-  .lightbox img{max-width:100%;max-height:100%;border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,0.4);}
+  .lightbox img{
+    max-width:100vw;max-height:100vh;width:auto;height:auto;
+    object-fit:contain;border-radius:0;box-shadow:none;
+    transition:transform 0.25s ease-out;touch-action:manipulation;
+  }
+  .lightbox img.zoomed{transform:scale(2.4);}
   .lightbox-close{
     position:fixed;top:calc(20px + env(safe-area-inset-top));right:20px;
     background:rgba(255,255,255,0.9);border:none;color:var(--ink);
     border-radius:50%;width:38px;height:38px;font-size:16px;cursor:pointer;
+    z-index:101;
   }
 
   ::-webkit-scrollbar{width:8px;height:8px;}
@@ -378,7 +385,7 @@
 </div>
 
 <div class="lightbox" id="lightbox" style="display:none;" onclick="closeLightbox()">
-  <img id="lightboxImg" src="" onclick="event.stopPropagation()">
+  <img id="lightboxImg" src="" ondblclick="event.stopPropagation(); toggleLightboxZoom()" onclick="event.stopPropagation()">
   <button class="lightbox-close" onclick="closeLightbox()">✕</button>
 </div>
 
@@ -891,13 +898,20 @@ function openAttachment(a){
 }
 
 function openLightbox(url){
-  document.getElementById('lightboxImg').src = url;
+  const img = document.getElementById('lightboxImg');
+  img.src = url;
+  img.classList.remove('zoomed');
   document.getElementById('lightbox').style.display = 'flex';
 }
 
 function closeLightbox(){
   document.getElementById('lightbox').style.display = 'none';
   document.getElementById('lightboxImg').src = '';
+  document.getElementById('lightboxImg').classList.remove('zoomed');
+}
+
+function toggleLightboxZoom(){
+  document.getElementById('lightboxImg').classList.toggle('zoomed');
 }
 
 function uid(){ return Math.random().toString(36).slice(2,10); }
