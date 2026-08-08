@@ -2150,10 +2150,8 @@ function exportCategoryToCalendar(catId){
     'END:VCALENDAR'
   ].join('\r\n');
 
-  const blob = new Blob([ics], {type: 'text/calendar;charset=utf-8'});
-  const url = URL.createObjectURL(blob);
-  window.open(url, '_blank');
-  setTimeout(()=>URL.revokeObjectURL(url), 60000);
+  const dataUri = 'data:text/calendar;charset=utf-8,' + encodeURIComponent(ics);
+  window.location.href = dataUri;
 }
 
 function calGoToday(){
