@@ -299,9 +299,9 @@
   }
   .attach-thumb img{width:100%;height:100%;object-fit:cover;}
   .attach-remove{
-    position:absolute;top:-6px;right:-6px;background:var(--coral-deep);color:#fff;
-    border:none;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer;
-    display:flex;align-items:center;justify-content:center;
+    position:absolute;top:-8px;right:-8px;background:var(--coral-deep);color:#fff;
+    border:none;border-radius:50%;width:26px;height:26px;font-size:14px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,0.25);
   }
   .lightbox{
     position:fixed;inset:0;background:#000;z-index:100;
@@ -385,7 +385,7 @@
 </div>
 
 <div class="lightbox" id="lightbox" style="display:none;" onclick="closeLightbox()">
-  <img id="lightboxImg" src="" ondblclick="event.stopPropagation(); toggleLightboxZoom()" onclick="event.stopPropagation()">
+  <img id="lightboxImg" src="" onclick="event.stopPropagation()" ontouchend="handleLightboxTap(event)">
   <button class="lightbox-close" onclick="closeLightbox()">✕</button>
 </div>
 
@@ -912,6 +912,18 @@ function closeLightbox(){
 
 function toggleLightboxZoom(){
   document.getElementById('lightboxImg').classList.toggle('zoomed');
+}
+
+let lightboxLastTap = 0;
+function handleLightboxTap(e){
+  e.stopPropagation();
+  const now = Date.now();
+  if(now - lightboxLastTap < 350){
+    toggleLightboxZoom();
+    lightboxLastTap = 0;
+  }else{
+    lightboxLastTap = now;
+  }
 }
 
 function uid(){ return Math.random().toString(36).slice(2,10); }
