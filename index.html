@@ -2133,7 +2133,7 @@ function itemToVEvent(item, cat){
   return lines.join('\r\n');
 }
 
-function exportCategoryToCalendar(catId){
+async function exportCategoryToCalendar(catId){
   const cat = getCategory(catId);
   const items = state.items.filter(i=>i.category===catId && i.dueDate);
   if(items.length === 0){
@@ -2150,11 +2150,23 @@ function exportCategoryToCalendar(catId){
     'END:VCALENDAR'
   ].join('\r\n');
 
+  const filename = cat.label.replace(/\s+/g,'_') + '.ics';
+  const file = new File([ics], filename, {type: 'text/calendar'});
+
+  if(navigator.canShare && navigator.canShare({files:[file]})){
+    try{
+      await navigator.share({files:[file], title: cat.label + ' – schema'});
+    }catch(e){
+      // avbrutet av användaren, ingen åtgärd
+    }
+    return;
+  }
+
   const blob = new Blob([ics], {type: 'text/calendar;charset=utf-8'});
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
-  link.download = cat.label.replace(/\s+/g,'_') + '.ics';
+  link.download = filename;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
