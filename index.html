@@ -941,6 +941,10 @@ let lightboxPanOrigY = 0;
 let lightboxTouchMode = null;
 let lightboxTapStartX = 0;
 let lightboxTapStartY = 0;
+let lightboxPinchMidX = 0;
+let lightboxPinchMidY = 0;
+let lightboxPinchAnchorX = 0;
+let lightboxPinchAnchorY = 0;
 
 function lightboxTouchDistance(touches){
   const dx = touches[0].clientX - touches[1].clientX;
@@ -953,11 +957,21 @@ function applyLightboxTransform(){
   img.style.transform = `translate(${lightboxTranslateX}px, ${lightboxTranslateY}px) scale(${lightboxScale})`;
 }
 
+function setLightboxPinchAnchor(touches){
+  lightboxPinchMidX = (touches[0].clientX + touches[1].clientX) / 2;
+  lightboxPinchMidY = (touches[0].clientY + touches[1].clientY) / 2;
+  const cx = window.innerWidth / 2;
+  const cy = window.innerHeight / 2;
+  lightboxPinchAnchorX = (lightboxPinchMidX - cx - lightboxTranslateX) / lightboxScale;
+  lightboxPinchAnchorY = (lightboxPinchMidY - cy - lightboxTranslateY) / lightboxScale;
+}
+
 function handleLightboxTouchStart(e){
   if(e.touches.length === 2){
     lightboxTouchMode = 'pinch';
     lightboxStartDist = lightboxTouchDistance(e.touches);
     lightboxStartScale = lightboxScale;
+    setLightboxPinchAnchor(e.touches);
   }else if(e.touches.length === 1 && lightboxScale > 1){
     lightboxTouchMode = 'pan';
     lightboxPanStartX = e.touches[0].clientX;
@@ -979,10 +993,15 @@ function handleLightboxTouchMove(e){
       lightboxTouchMode = 'pinch';
       lightboxStartDist = lightboxTouchDistance(e.touches);
       lightboxStartScale = lightboxScale;
+      setLightboxPinchAnchor(e.touches);
     }
     const dist = lightboxTouchDistance(e.touches);
     const ratio = dist / lightboxStartDist;
     lightboxScale = Math.min(Math.max(lightboxStartScale * ratio, 1), 5);
+    const cx = window.innerWidth / 2;
+    const cy = window.innerHeight / 2;
+    lightboxTranslateX = lightboxPinchMidX - cx - lightboxScale * lightboxPinchAnchorX;
+    lightboxTranslateY = lightboxPinchMidY - cy - lightboxScale * lightboxPinchAnchorY;
     img.style.transition = 'none';
     applyLightboxTransform();
   }else if(e.touches.length === 1 && lightboxScale > 1){
