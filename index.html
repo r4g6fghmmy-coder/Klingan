@@ -243,6 +243,7 @@
     display:flex;align-items:flex-end;justify-content:center;z-index:50;
     padding:0;
   }
+  #confirmOverlay{z-index:80;}
   @keyframes sheetUp{
     from{transform:translateY(24px);opacity:0.6;}
     to{transform:translateY(0);opacity:1;}
@@ -2147,7 +2148,13 @@ function exportCategoryToCalendar(catId){
       'Kalenderexport funkar tyvärr bara i Safari, inte via hemskärms-ikonen (en iOS-begränsning). Vill du öppna sidan i Safari? Exporten startar automatiskt där.',
       ()=>{
         const url = location.origin + location.pathname + '?exportCal=' + encodeURIComponent(catId);
-        window.open(url, '_blank');
+        const link = document.createElement('a');
+        link.href = url;
+        link.target = '_blank';
+        link.rel = 'noopener';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
       },
       'Öppna i Safari'
     );
