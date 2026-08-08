@@ -244,6 +244,7 @@
     padding:0;
   }
   #confirmOverlay{z-index:80;}
+  #safariQrOverlay{z-index:80;}
   @keyframes sheetUp{
     from{transform:translateY(24px);opacity:0.6;}
     to{transform:translateY(0);opacity:1;}
@@ -512,6 +513,33 @@
       <button class="cancel-btn" onclick="closeConfirm()">Avbryt</button>
       <button id="confirmActionBtn" onclick="confirmAction()" style="background:var(--coral-deep);color:#fff;border:none;border-radius:12px;padding:10px 16px;font-weight:700;font-size:14px;cursor:pointer;">Ta bort</button>
     </div>
+  </div>
+</div>
+
+<div class="overlay" id="safariQrOverlay" style="display:none;" onclick="if(event.target===this) closeSafariQR()">
+  <div class="modal" style="max-width:380px;">
+    <div class="sheet-handle"></div>
+    <h3>Öppna i Safari</h3>
+    <p style="font-size:14px;color:var(--ink-muted);line-height:1.5;margin:0 0 14px;">Kalenderexport funkar tyvärr bara i Safari, inte via hemskärms-ikonen (en iOS-begränsning).</p>
+    <div style="background:var(--surface-soft);border-radius:14px;padding:14px;margin-bottom:16px;">
+      <div style="font-weight:700;font-size:13px;margin-bottom:8px;">På samma telefon:</div>
+      <ol style="margin:0;padding-left:18px;font-size:13.5px;color:var(--ink-muted);line-height:1.6;">
+        <li>Tryck "Kopiera länk" nedan</li>
+        <li>Öppna <b>Safari</b>-appen själv</li>
+        <li>Tryck i adressfältet och klistra in</li>
+      </ol>
+    </div>
+    <input id="safariQrLink" readonly style="margin-bottom:14px;font-size:12px;" onclick="this.select()">
+    <div class="modal-actions">
+      <button class="cancel-btn" onclick="closeSafariQR()">Stäng</button>
+      <button id="safariCopyBtn" onclick="copySafariLink()" style="background:var(--coral);color:#fff;border:none;border-radius:12px;padding:10px 16px;font-weight:700;font-size:14px;cursor:pointer;">📋 Kopiera länk</button>
+    </div>
+    <details style="margin-top:16px;">
+      <summary style="font-size:12.5px;color:var(--ink-muted);cursor:pointer;">Har du en annan enhet till hands?</summary>
+      <div style="display:flex;justify-content:center;margin-top:12px;">
+        <img id="safariQrImg" src="" alt="QR-kod" style="width:150px;height:150px;border-radius:14px;background:#fff;padding:8px;">
+      </div>
+    </details>
   </div>
 </div>
 
@@ -2144,24 +2172,40 @@ function exportCategoryToCalendar(catId){
 
   const isStandalone = window.navigator.standalone === true;
   if(isStandalone){
-    showConfirm(
-      'Kalenderexport funkar tyvärr bara i Safari, inte via hemskärms-ikonen (en iOS-begränsning). Vill du öppna sidan i Safari? Exporten startar automatiskt där.',
-      ()=>{
-        const url = location.origin + location.pathname + '?exportCal=' + encodeURIComponent(catId);
-        const link = document.createElement('a');
-        link.href = url;
-        link.target = '_blank';
-        link.rel = 'noopener';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      },
-      'Öppna i Safari'
-    );
+    showSafariQR(catId);
     return;
   }
 
   doExportCalendar(catId);
+}
+
+function showSafariQR(catId){
+  const url = location.origin + location.pathname + '?exportCal=' + encodeURIComponent(catId);
+  const qrImgUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' + encodeURIComponent(url);
+
+  document.getElementById('safariQrImg').src = qrImgUrl;
+  document.getElementById('safariQrLink').value = url;
+  document.getElementById('safariQrOverlay').style.display = 'flex';
+}
+
+function closeSafariQR(){
+  document.getElementById('safariQrOverlay').style.display = 'none';
+}
+
+function copySafariLink(){
+  const input = document.getElementById('safariQrLink');
+  input.select();
+  input.setSelectionRange(0, 99999);
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(input.value).then(()=>{
+      document.getElementById('safariCopyBtn').textContent = 'Kopierad!';
+      setTimeout(()=>{ document.getElementById('safariCopyBtn').textContent = 'Kopiera länk'; }, 1500);
+    }).catch(()=>{
+      document.execCommand('copy');
+    });
+  }else{
+    document.execCommand('copy');
+  }
 }
 
 function doExportCalendar(catId){
@@ -2365,9 +2409,10 @@ setupSheetDrag('detailOverlay', closeDetail);
 setupSheetDrag('calendarOverlay', closeCalendar);
 setupSheetDrag('shiftOverlay', closeShiftModal);
 setupSheetDrag('confirmOverlay', closeConfirm);
+setupSheetDrag('safariQrOverlay', closeSafariQR);
 
 function anyOverlayOpen(){
-  return ['overlay','catOverlay','subcatOverlay','detailOverlay','calendarOverlay','shiftOverlay','confirmOverlay'].some(id=>{
+  return ['overlay','catOverlay','subcatOverlay','detailOverlay','calendarOverlay','shiftOverlay','confirmOverlay','safariQrOverlay'].some(id=>{
     const el = document.getElementById(id);
     return el && el.style.display === 'flex';
   });
