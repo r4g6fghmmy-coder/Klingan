@@ -299,9 +299,9 @@
   }
   .attach-thumb img{width:100%;height:100%;object-fit:cover;}
   .attach-remove{
-    position:absolute;top:-8px;right:-8px;background:var(--coral-deep);color:#fff;
-    border:none;border-radius:50%;width:26px;height:26px;font-size:14px;cursor:pointer;
-    display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,0.25);
+    position:absolute;top:3px;right:3px;background:var(--coral-deep);color:#fff;
+    border:2px solid #fff;border-radius:50%;width:24px;height:24px;font-size:13px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,0.35);
   }
   .lightbox{
     position:fixed;inset:0;background:#000;z-index:100;
@@ -311,7 +311,7 @@
   .lightbox img{
     max-width:100vw;max-height:100vh;width:auto;height:auto;
     object-fit:contain;border-radius:0;box-shadow:none;
-    transition:transform 0.25s ease-out;touch-action:manipulation;
+    transition:transform 0.25s ease-out;touch-action:none;
   }
   .lightbox img.zoomed{transform:scale(2.4);}
   .lightbox-close{
@@ -385,7 +385,10 @@
 </div>
 
 <div class="lightbox" id="lightbox" style="display:none;" onclick="closeLightbox()">
-  <img id="lightboxImg" src="" onclick="event.stopPropagation()" ontouchend="handleLightboxTap(event)">
+  <img id="lightboxImg" src="" onclick="event.stopPropagation()"
+    ontouchstart="handleLightboxTouchStart(event)"
+    ontouchmove="handleLightboxTouchMove(event)"
+    ontouchend="handleLightboxTouchEnd(event); handleLightboxTap(event)">
   <button class="lightbox-close" onclick="closeLightbox()">✕</button>
 </div>
 
@@ -901,22 +904,67 @@ function openLightbox(url){
   const img = document.getElementById('lightboxImg');
   img.src = url;
   img.classList.remove('zoomed');
+  img.style.transform = '';
+  lightboxScale = 1;
   document.getElementById('lightbox').style.display = 'flex';
 }
 
 function closeLightbox(){
   document.getElementById('lightbox').style.display = 'none';
-  document.getElementById('lightboxImg').src = '';
-  document.getElementById('lightboxImg').classList.remove('zoomed');
+  const img = document.getElementById('lightboxImg');
+  img.src = '';
+  img.classList.remove('zoomed');
+  img.style.transform = '';
+  lightboxScale = 1;
 }
 
 function toggleLightboxZoom(){
-  document.getElementById('lightboxImg').classList.toggle('zoomed');
+  const img = document.getElementById('lightboxImg');
+  lightboxScale = (lightboxScale > 1) ? 1 : 2.4;
+  img.style.transform = `scale(${lightboxScale})`;
 }
 
+let lightboxScale = 1;
+let lightboxStartDist = 0;
+let lightboxStartScale = 1;
 let lightboxLastTap = 0;
+
+function lightboxTouchDistance(touches){
+  const dx = touches[0].clientX - touches[1].clientX;
+  const dy = touches[0].clientY - touches[1].clientY;
+  return Math.sqrt(dx*dx + dy*dy);
+}
+
+function handleLightboxTouchStart(e){
+  if(e.touches.length === 2){
+    lightboxStartDist = lightboxTouchDistance(e.touches);
+    lightboxStartScale = lightboxScale;
+  }
+}
+
+function handleLightboxTouchMove(e){
+  if(e.touches.length === 2){
+    e.preventDefault();
+    const dist = lightboxTouchDistance(e.touches);
+    const ratio = dist / lightboxStartDist;
+    lightboxScale = Math.min(Math.max(lightboxStartScale * ratio, 1), 5);
+    const img = document.getElementById('lightboxImg');
+    img.style.transition = 'none';
+    img.style.transform = `scale(${lightboxScale})`;
+  }
+}
+
+function handleLightboxTouchEnd(e){
+  const img = document.getElementById('lightboxImg');
+  img.style.transition = '';
+  if(e.touches.length === 0){
+    lightboxLastTap = 0;
+  }
+}
+
 function handleLightboxTap(e){
   e.stopPropagation();
+  if(e.changedTouches && e.changedTouches.length > 1) return;
   const now = Date.now();
   if(now - lightboxLastTap < 350){
     toggleLightboxZoom();
