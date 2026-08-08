@@ -244,7 +244,6 @@
     padding:0;
   }
   #confirmOverlay{z-index:80;}
-  #safariQrOverlay{z-index:80;}
   @keyframes sheetUp{
     from{transform:translateY(24px);opacity:0.6;}
     to{transform:translateY(0);opacity:1;}
@@ -516,32 +515,6 @@
   </div>
 </div>
 
-<div class="overlay" id="safariQrOverlay" style="display:none;" onclick="if(event.target===this) closeSafariQR()">
-  <div class="modal" style="max-width:380px;">
-    <div class="sheet-handle"></div>
-    <h3>Öppna i Safari</h3>
-    <p style="font-size:14px;color:var(--ink-muted);line-height:1.5;margin:0 0 14px;">Kalenderexport funkar tyvärr bara i Safari, inte via hemskärms-ikonen (en iOS-begränsning).</p>
-    <div style="background:var(--surface-soft);border-radius:14px;padding:14px;margin-bottom:16px;">
-      <div style="font-weight:700;font-size:13px;margin-bottom:8px;">På samma telefon:</div>
-      <ol style="margin:0;padding-left:18px;font-size:13.5px;color:var(--ink-muted);line-height:1.6;">
-        <li>Tryck "Kopiera länk" nedan</li>
-        <li>Öppna <b>Safari</b>-appen själv</li>
-        <li>Tryck i adressfältet och klistra in</li>
-        <li>Kalendervyn öppnas automatiskt – tryck på kalenderknappen där</li>
-      </ol>
-    </div>
-    <input id="safariQrLink" readonly style="margin-bottom:14px;font-size:12px;" onclick="this.select()">
-    <div class="modal-actions">
-      <button class="cancel-btn" onclick="closeSafariQR()">Stäng</button>
-      <button id="safariCopyBtn" onclick="copySafariLink()" style="background:var(--coral);color:#fff;border:none;border-radius:12px;padding:10px 16px;font-weight:700;font-size:14px;cursor:pointer;">📋 Kopiera länk</button>
-    </div>
-    <details style="margin-top:16px;">
-      <summary style="font-size:12.5px;color:var(--ink-muted);cursor:pointer;">Har du en annan enhet till hands?</summary>
-      <div style="display:flex;justify-content:center;margin-top:12px;">
-        <img id="safariQrImg" src="" alt="QR-kod" style="width:150px;height:150px;border-radius:14px;background:#fff;padding:8px;">
-      </div>
-    </details>
-  </div>
 </div>
 
 <div class="overlay" id="calendarOverlay" style="display:none;" onclick="if(event.target===this) closeCalendar()">
@@ -556,8 +529,6 @@
     <div class="cal-weekdays" id="calWeekdays"></div>
     <div class="cal-grid" id="calGrid"></div>
     <div class="cal-legend" id="calLegend"></div>
-    <button class="add-btn" style="width:100%;margin-top:16px;" onclick="exportCategoryToCalendar(calendarCategory)">📆 Lägg till i telefonens kalender</button>
-    <div style="font-size:11px;color:var(--ink-muted);text-align:center;margin-top:8px;">Fungerar just nu bara i Safari, inte via hemskärms-ikonen (iOS-begränsning)</div>
   </div>
 </div>
 
@@ -2118,128 +2089,6 @@ function calMonthShift(delta){
   renderCalendar();
 }
 
-function pad2(n){ return String(n).padStart(2,'0'); }
-
-function icsDateTime(dateStr, timeStr){
-  const [y,m,d] = dateStr.split('-');
-  const [hh,mm] = timeStr.split(':');
-  return `${y}${m}${d}T${hh}${mm}00`;
-}
-
-function icsEscape(text){
-  return String(text||'').replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\n/g,'\\n');
-}
-
-function itemToVEvent(item, cat){
-  const parts = (item.name || '').split('–');
-  let startTime = parts[0] ? parts[0].trim() : '00:00';
-  let endTime = parts[1] ? parts[1].trim() : '23:59';
-  if(endTime === '24:00') endTime = '23:59';
-
-  const [sh, sm] = startTime.split(':').map(Number);
-  const [eh, em] = endTime.split(':').map(Number);
-
-  const startDT = icsDateTime(item.dueDate, startTime);
-
-  let endDateObj = new Date(item.dueDate + 'T00:00:00');
-  if(eh < sh || (eh === sh && em <= sm)){
-    endDateObj.setDate(endDateObj.getDate() + 1);
-  }
-  const endDateStr = `${endDateObj.getFullYear()}-${pad2(endDateObj.getMonth()+1)}-${pad2(endDateObj.getDate())}`;
-  const endDT = icsDateTime(endDateStr, endTime);
-
-  const now = new Date();
-  const stamp = `${now.getUTCFullYear()}${pad2(now.getUTCMonth()+1)}${pad2(now.getUTCDate())}T${pad2(now.getUTCHours())}${pad2(now.getUTCMinutes())}${pad2(now.getUTCSeconds())}Z`;
-
-  const lines = [
-    'BEGIN:VEVENT',
-    'UID:' + item.id + '@husets-almanacka',
-    'DTSTAMP:' + stamp,
-    'DTSTART:' + startDT,
-    'DTEND:' + endDT,
-    'SUMMARY:' + icsEscape((cat.label || 'Pass') + ': ' + item.name)
-  ];
-  if(item.notes) lines.push('DESCRIPTION:' + icsEscape(item.notes));
-  lines.push('END:VEVENT');
-  return lines.join('\r\n');
-}
-
-function exportCategoryToCalendar(catId){
-  const items = state.items.filter(i=>i.category===catId && i.dueDate);
-  if(items.length === 0){
-    alert('Inga pass att lägga till.');
-    return;
-  }
-
-  const isStandalone = window.navigator.standalone === true;
-  if(isStandalone){
-    showSafariQR(catId);
-    return;
-  }
-
-  doExportCalendar(catId);
-}
-
-function showSafariQR(catId){
-  const url = location.origin + location.pathname + '?exportCal=' + encodeURIComponent(catId);
-  const qrImgUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' + encodeURIComponent(url);
-
-  document.getElementById('safariQrImg').src = qrImgUrl;
-  document.getElementById('safariQrLink').value = url;
-  document.getElementById('safariQrOverlay').style.display = 'flex';
-}
-
-function closeSafariQR(){
-  document.getElementById('safariQrOverlay').style.display = 'none';
-}
-
-function copySafariLink(){
-  const input = document.getElementById('safariQrLink');
-  input.select();
-  input.setSelectionRange(0, 99999);
-  if(navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(input.value).then(()=>{
-      document.getElementById('safariCopyBtn').textContent = 'Kopierad!';
-      setTimeout(()=>{ document.getElementById('safariCopyBtn').textContent = 'Kopiera länk'; }, 1500);
-    }).catch(()=>{
-      document.execCommand('copy');
-    });
-  }else{
-    document.execCommand('copy');
-  }
-}
-
-function doExportCalendar(catId){
-  const cat = getCategory(catId);
-  const items = state.items.filter(i=>i.category===catId && i.dueDate);
-  if(items.length === 0) return;
-
-  const events = items.map(i=>itemToVEvent(i, cat)).join('\r\n');
-  const ics = [
-    'BEGIN:VCALENDAR',
-    'VERSION:2.0',
-    'PRODID:-//Husets Almanacka//SV',
-    'CALSCALE:GREGORIAN',
-    events,
-    'END:VCALENDAR'
-  ].join('\r\n');
-
-  const dataUri = 'data:text/calendar;charset=utf-8,' + encodeURIComponent(ics);
-  window.location.href = dataUri;
-}
-
-function checkAutoExport(){
-  const params = new URLSearchParams(window.location.search);
-  const exportCat = params.get('exportCal');
-  if(!exportCat) return;
-  history.replaceState(null, '', location.pathname);
-  setTimeout(()=>{
-    if(state.categories.some(c=>c.id===exportCat)){
-      openCalendar(exportCat);
-    }
-  }, 500);
-}
-
 function calGoToday(){
   const now = new Date();
   calendarMonth = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -2410,10 +2259,9 @@ setupSheetDrag('detailOverlay', closeDetail);
 setupSheetDrag('calendarOverlay', closeCalendar);
 setupSheetDrag('shiftOverlay', closeShiftModal);
 setupSheetDrag('confirmOverlay', closeConfirm);
-setupSheetDrag('safariQrOverlay', closeSafariQR);
 
 function anyOverlayOpen(){
-  return ['overlay','catOverlay','subcatOverlay','detailOverlay','calendarOverlay','shiftOverlay','confirmOverlay','safariQrOverlay'].some(id=>{
+  return ['overlay','catOverlay','subcatOverlay','detailOverlay','calendarOverlay','shiftOverlay','confirmOverlay'].some(id=>{
     const el = document.getElementById(id);
     return el && el.style.display === 'flex';
   });
@@ -2487,7 +2335,6 @@ function anyOverlayOpen(){
 })();
 
 loadState();
-checkAutoExport();
 </script>
 </body>
 </html>
