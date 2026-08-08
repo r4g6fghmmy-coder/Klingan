@@ -388,11 +388,11 @@
   </div>
 </div>
 
-<div class="lightbox" id="lightbox" style="display:none;" onclick="closeLightbox()">
-  <img id="lightboxImg" src="" onclick="event.stopPropagation()"
-    ontouchstart="handleLightboxTouchStart(event)"
-    ontouchmove="handleLightboxTouchMove(event)"
-    ontouchend="handleLightboxTouchEnd(event); handleLightboxTap(event)">
+<div class="lightbox" id="lightbox" style="display:none;"
+  ontouchstart="handleLightboxTouchStart(event)"
+  ontouchmove="handleLightboxTouchMove(event)"
+  ontouchend="handleLightboxTouchEnd(event)">
+  <img id="lightboxImg" src="">
   <button class="lightbox-close" onclick="closeLightbox()">✕</button>
 </div>
 
@@ -929,17 +929,6 @@ function closeLightbox(){
   img.style.transform = '';
 }
 
-function toggleLightboxZoom(){
-  if(lightboxScale > 1){
-    lightboxScale = 1;
-    lightboxTranslateX = 0;
-    lightboxTranslateY = 0;
-  }else{
-    lightboxScale = 2.4;
-  }
-  applyLightboxTransform();
-}
-
 let lightboxScale = 1;
 let lightboxTranslateX = 0;
 let lightboxTranslateY = 0;
@@ -950,7 +939,8 @@ let lightboxPanStartY = 0;
 let lightboxPanOrigX = 0;
 let lightboxPanOrigY = 0;
 let lightboxTouchMode = null;
-let lightboxLastTap = 0;
+let lightboxTapStartX = 0;
+let lightboxTapStartY = 0;
 
 function lightboxTouchDistance(touches){
   const dx = touches[0].clientX - touches[1].clientX;
@@ -974,28 +964,48 @@ function handleLightboxTouchStart(e){
     lightboxPanStartY = e.touches[0].clientY;
     lightboxPanOrigX = lightboxTranslateX;
     lightboxPanOrigY = lightboxTranslateY;
-  }else{
-    lightboxTouchMode = null;
+  }else if(e.touches.length === 1){
+    lightboxTouchMode = 'tap';
+    lightboxTapStartX = e.touches[0].clientX;
+    lightboxTapStartY = e.touches[0].clientY;
   }
 }
 
 function handleLightboxTouchMove(e){
   const img = document.getElementById('lightboxImg');
-  if(lightboxTouchMode === 'pinch' && e.touches.length === 2){
+  if(e.touches.length === 2){
     e.preventDefault();
+    if(lightboxTouchMode !== 'pinch'){
+      lightboxTouchMode = 'pinch';
+      lightboxStartDist = lightboxTouchDistance(e.touches);
+      lightboxStartScale = lightboxScale;
+    }
     const dist = lightboxTouchDistance(e.touches);
     const ratio = dist / lightboxStartDist;
     lightboxScale = Math.min(Math.max(lightboxStartScale * ratio, 1), 5);
     img.style.transition = 'none';
     applyLightboxTransform();
-  }else if(lightboxTouchMode === 'pan' && e.touches.length === 1){
+  }else if(e.touches.length === 1 && lightboxScale > 1){
     e.preventDefault();
+    if(lightboxTouchMode !== 'pan'){
+      lightboxTouchMode = 'pan';
+      lightboxPanStartX = e.touches[0].clientX;
+      lightboxPanStartY = e.touches[0].clientY;
+      lightboxPanOrigX = lightboxTranslateX;
+      lightboxPanOrigY = lightboxTranslateY;
+    }
     const dx = e.touches[0].clientX - lightboxPanStartX;
     const dy = e.touches[0].clientY - lightboxPanStartY;
     lightboxTranslateX = lightboxPanOrigX + dx;
     lightboxTranslateY = lightboxPanOrigY + dy;
     img.style.transition = 'none';
     applyLightboxTransform();
+  }else if(lightboxTouchMode === 'tap' && e.touches.length === 1){
+    const dx = e.touches[0].clientX - lightboxTapStartX;
+    const dy = e.touches[0].clientY - lightboxTapStartY;
+    if(Math.sqrt(dx*dx + dy*dy) > 12){
+      lightboxTouchMode = null;
+    }
   }
 }
 
@@ -1007,21 +1017,11 @@ function handleLightboxTouchEnd(e){
     lightboxTranslateY = 0;
     applyLightboxTransform();
   }
+  if(lightboxTouchMode === 'tap' && e.touches.length === 0){
+    closeLightbox();
+  }
   if(e.touches.length === 0){
     lightboxTouchMode = null;
-    lightboxLastTap = lightboxLastTap;
-  }
-}
-
-function handleLightboxTap(e){
-  e.stopPropagation();
-  if(e.changedTouches && e.changedTouches.length > 1) return;
-  const now = Date.now();
-  if(now - lightboxLastTap < 350){
-    toggleLightboxZoom();
-    lightboxLastTap = 0;
-  }else{
-    lightboxLastTap = now;
   }
 }
 
