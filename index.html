@@ -600,6 +600,7 @@ function loadState(){
   seedJobSchedule();
   seedJobScheduleV2();
   seedJobTasksSubcat();
+  seedJobScheduleUpdateV1();
   fixJobExcludeFlag();
   render();
 }
@@ -613,6 +614,25 @@ function seedJobTasksSubcat(){
     state.subcategories.push({ id: uid(), categoryId: cat.id, label: 'Uppgifter', isSchedule: false });
   }
   state.seedJobTasksV1 = true;
+  saveState();
+}
+
+function seedJobScheduleUpdateV1(){
+  if(state.seedJobUpdateV1) return;
+  const cat = state.categories.find(c=>c.label==='Jobb');
+  const subcat = cat ? state.subcategories.find(s=>s.categoryId===cat.id && s.label==='Schema') : null;
+  if(!cat || !subcat){ state.seedJobUpdateV1 = true; return; }
+
+  const removeDates = ['2026-08-25','2026-08-26','2026-09-02','2026-09-03','2026-09-07','2026-09-08'];
+
+  state.items = state.items.filter(i=>{
+    if(i.category !== cat.id || i.subcategoryId !== subcat.id) return true;
+    if(removeDates.includes(i.dueDate)) return false;
+    if(i.name === '08:00–15:42') return false;
+    return true;
+  });
+
+  state.seedJobUpdateV1 = true;
   saveState();
 }
 
