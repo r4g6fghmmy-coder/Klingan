@@ -527,6 +527,7 @@
     <div class="cal-grid" id="calGrid"></div>
     <div class="cal-legend" id="calLegend"></div>
     <button class="add-btn" style="width:100%;margin-top:16px;" onclick="exportCategoryToCalendar(calendarCategory)">📆 Lägg till i telefonens kalender</button>
+    <div style="font-size:11px;color:var(--ink-muted);text-align:center;margin-top:8px;">Fungerar just nu bara i Safari, inte via hemskärms-ikonen (iOS-begränsning)</div>
   </div>
 </div>
 
@@ -2133,13 +2134,34 @@ function itemToVEvent(item, cat){
   return lines.join('\r\n');
 }
 
-async function exportCategoryToCalendar(catId){
-  const cat = getCategory(catId);
+function exportCategoryToCalendar(catId){
   const items = state.items.filter(i=>i.category===catId && i.dueDate);
   if(items.length === 0){
     alert('Inga pass att lägga till.');
     return;
   }
+
+  const isStandalone = window.navigator.standalone === true;
+  if(isStandalone){
+    showConfirm(
+      'Kalenderexport funkar tyvärr bara i Safari, inte via hemskärms-ikonen (en iOS-begränsning). Vill du öppna sidan i Safari? Exporten startar automatiskt där.',
+      ()=>{
+        const url = location.origin + location.pathname + '?exportCal=' + encodeURIComponent(catId);
+        window.open(url, '_blank');
+      },
+      'Öppna i Safari'
+    );
+    return;
+  }
+
+  doExportCalendar(catId);
+}
+
+function doExportCalendar(catId){
+  const cat = getCategory(catId);
+  const items = state.items.filter(i=>i.category===catId && i.dueDate);
+  if(items.length === 0) return;
+
   const events = items.map(i=>itemToVEvent(i, cat)).join('\r\n');
   const ics = [
     'BEGIN:VCALENDAR',
@@ -2150,28 +2172,20 @@ async function exportCategoryToCalendar(catId){
     'END:VCALENDAR'
   ].join('\r\n');
 
-  const filename = cat.label.replace(/\s+/g,'_') + '.ics';
-  const file = new File([ics], filename, {type: 'text/calendar'});
+  const dataUri = 'data:text/calendar;charset=utf-8,' + encodeURIComponent(ics);
+  window.location.href = dataUri;
+}
 
-  if(navigator.canShare && navigator.canShare({files:[file]})){
-    try{
-      await navigator.share({files:[file], title: cat.label + ' – schema'});
-    }catch(e){
-      // avbrutet av användaren, ingen åtgärd
+function checkAutoExport(){
+  const params = new URLSearchParams(window.location.search);
+  const exportCat = params.get('exportCal');
+  if(!exportCat) return;
+  history.replaceState(null, '', location.pathname);
+  setTimeout(()=>{
+    if(state.categories.some(c=>c.id===exportCat)){
+      doExportCalendar(exportCat);
     }
-    return;
-  }
-
-  const blob = new Blob([ics], {type: 'text/calendar;charset=utf-8'});
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = filename;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  setTimeout(()=>URL.revokeObjectURL(url), 60000);
-  alert('Kalenderfilen har sparats. Öppna Filer-appen, hitta filen (oftast under "Nedladdat"), och tryck på den för att lägga till passen i Kalender.');
+  }, 500);
 }
 
 function calGoToday(){
@@ -2420,6 +2434,7 @@ function anyOverlayOpen(){
 })();
 
 loadState();
+checkAutoExport();
 </script>
 </body>
 </html>
