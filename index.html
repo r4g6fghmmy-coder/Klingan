@@ -584,9 +584,14 @@
   </div>
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" crossorigin="anonymous"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js" crossorigin="anonymous"></script>
 <script>
+window.addEventListener('error', function(e){
+  console.error('Globalt fel:', e.message, e.filename, e.lineno);
+  if(typeof hideSplash === 'function') hideSplash();
+});
+
 const STORAGE_KEY = 'household-tracker-data';
 let state = { items: [], categories: [], subcategories: [] };
 let currentType = 'task';
@@ -655,6 +660,7 @@ let suppressNextSnapshotSave = false;
 function initApp(){
   householdCode = localStorage.getItem(HOUSEHOLD_CODE_KEY);
   if(!householdCode){
+    hideSplash();
     document.getElementById('householdCodeOverlay').style.display = 'flex';
   }else{
     connectFirebase();
