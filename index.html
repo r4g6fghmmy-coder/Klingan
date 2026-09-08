@@ -2466,6 +2466,7 @@ function render(){
     renderSecondaryRibbons();
   }
   renderBoard();
+  hideSplash();
 }
 
 function setupSheetDrag(overlayId, closeFn){
@@ -2616,15 +2617,19 @@ function anyOverlayOpen(){
 
 initApp();
 
-window.addEventListener('load', ()=>{
-  setTimeout(()=>{
-    const splash = document.getElementById('appSplash');
-    if(splash){
+let splashHidden = false;
+function hideSplash(){
+  if(splashHidden) return;
+  splashHidden = true;
+  const splash = document.getElementById('appSplash');
+  if(splash){
+    setTimeout(()=>{
       splash.classList.add('fade-out');
       setTimeout(()=>splash.remove(), 550);
-    }
-  }, 900);
-});
+    }, 300);
+  }
+}
+setTimeout(hideSplash, 4000);
 </script>
 </body>
 </html>
