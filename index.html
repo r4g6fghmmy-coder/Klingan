@@ -331,6 +331,8 @@
   ::-webkit-scrollbar{width:8px;height:8px;}
   ::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
 </style>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 </head>
 <body>
 <div class="wrap">
@@ -520,6 +522,21 @@
   </div>
 </div>
 
+<div class="overlay" id="householdCodeOverlay" style="display:none;">
+  <div class="modal" style="max-width:380px;">
+    <div class="sheet-handle"></div>
+    <h3>Anslut till molnet</h3>
+    <p style="font-size:14px;color:var(--ink-muted);line-height:1.5;margin:0 0 14px;">Ange en egen kod (valfritt ord/lösenord). Samma kod används på alla enheter som ska dela samma data – skriv exakt samma kod på din frus telefon om ni ska dela.</p>
+    <div class="field">
+      <label>Familjekod</label>
+      <input id="household-code-input" placeholder="t.ex. klingan-familjen-2026">
+    </div>
+    <div class="modal-actions">
+      <button class="add-btn" style="width:100%;" onclick="submitHouseholdCode()">Anslut</button>
+    </div>
+  </div>
+</div>
+
 <div class="overlay" id="confirmOverlay" style="display:none;" onclick="if(event.target===this) closeConfirm()">
   <div class="modal" style="max-width:380px;">
     <div class="sheet-handle"></div>
@@ -601,15 +618,75 @@ function daysUntil(iso){
   return Math.round((d2-d1)/86400000);
 }
 
-function loadState(){
+const firebaseConfig = {
+  apiKey: "AIzaSyBfQjXM40fAMF_a4Q7OA0Bd1OsmPJCSDiw",
+  authDomain: "klingan-ab.firebaseapp.com",
+  projectId: "klingan-ab",
+  storageBucket: "klingan-ab.firebasestorage.app",
+  messagingSenderId: "930678079171",
+  appId: "1:930678079171:web:31727d917559bcdec9ec76",
+  measurementId: "G-NB8MZC5C5Y"
+};
+const HOUSEHOLD_CODE_KEY = 'householdCode';
+let householdCode = null;
+let firestoreDocRef = null;
+let suppressNextSnapshotSave = false;
+
+function initApp(){
+  householdCode = localStorage.getItem(HOUSEHOLD_CODE_KEY);
+  if(!householdCode){
+    document.getElementById('householdCodeOverlay').style.display = 'flex';
+  }else{
+    connectFirebase();
+  }
+}
+
+function submitHouseholdCode(){
+  const val = document.getElementById('household-code-input').value.trim();
+  if(!val){ return; }
+  localStorage.setItem(HOUSEHOLD_CODE_KEY, val);
+  householdCode = val;
+  document.getElementById('householdCodeOverlay').style.display = 'none';
+  connectFirebase();
+}
+
+function connectFirebase(){
+  try{
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    try{ db.enablePersistence({synchronizeTabs:true}).catch(()=>{}); }catch(e){}
+
+    firestoreDocRef = db.collection('households').doc(householdCode);
+    firestoreDocRef.onSnapshot((doc)=>{
+      if(doc.exists && doc.data().json){
+        state = JSON.parse(doc.data().json);
+      }else{
+        state = { items: [], categories: [], subcategories: [] };
+      }
+      ensureDefaultsAndSeed();
+      render();
+    }, (err)=>{
+      console.error('Firestore-fel, kör lokalt istället', err);
+      loadLocalFallback();
+    });
+  }catch(e){
+    console.error('Kunde inte ansluta till molnet, kör lokalt', e);
+    loadLocalFallback();
+  }
+}
+
+function loadLocalFallback(){
   try{
     const raw = localStorage.getItem(STORAGE_KEY);
-    if(raw){
-      state = JSON.parse(raw);
-    }
+    if(raw) state = JSON.parse(raw);
   }catch(e){
     console.log('Ingen sparad data ännu, startar tomt.');
   }
+  ensureDefaultsAndSeed();
+  render();
+}
+
+function ensureDefaultsAndSeed(){
   if(!state.categories || state.categories.length===0){
     state.categories = DEFAULT_CATEGORIES.map(c=>({...c}));
   }
@@ -621,7 +698,6 @@ function loadState(){
   seedJobTasksSubcat();
   seedJobScheduleUpdateV1();
   fixJobExcludeFlag();
-  render();
 }
 
 function seedJobTasksSubcat(){
@@ -819,6 +895,12 @@ function saveState(){
     }else{
       console.error('Kunde inte spara', e);
     }
+  }
+  if(firestoreDocRef){
+    firestoreDocRef.set({
+      json: JSON.stringify(state),
+      updatedAt: Date.now()
+    }).catch(e=>console.error('Kunde inte synka till molnet', e));
   }
 }
 
@@ -2435,7 +2517,7 @@ setupSheetDrag('shiftOverlay', closeShiftModal);
 setupSheetDrag('confirmOverlay', closeConfirm);
 
 function anyOverlayOpen(){
-  return ['overlay','catOverlay','subcatOverlay','detailOverlay','calendarOverlay','shiftOverlay','confirmOverlay'].some(id=>{
+  return ['overlay','catOverlay','subcatOverlay','detailOverlay','calendarOverlay','shiftOverlay','confirmOverlay','householdCodeOverlay'].some(id=>{
     const el = document.getElementById(id);
     return el && el.style.display === 'flex';
   });
@@ -2508,7 +2590,7 @@ function anyOverlayOpen(){
   document.addEventListener('touchcancel', onEnd, {passive:true});
 })();
 
-loadState();
+initApp();
 </script>
 </body>
 </html>
