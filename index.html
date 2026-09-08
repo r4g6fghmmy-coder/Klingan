@@ -2090,18 +2090,6 @@ function renderBoard(){
   frag.appendChild(addSubBtn);
 
   const ungrouped = state.items.filter(i=>i.category===activeCategory && !i.subcategoryId);
-
-  if(subcats.length > 0){
-    const heading = document.createElement('div');
-    heading.style.fontFamily = "'Baloo 2', sans-serif";
-    heading.style.fontWeight = '700';
-    heading.style.fontSize = '13px';
-    heading.style.color = 'var(--ink-muted)';
-    heading.style.margin = '4px 2px 8px';
-    heading.textContent = 'Övrigt';
-    frag.appendChild(heading);
-  }
-
   frag.appendChild(renderItemsList(ungrouped));
   board.appendChild(frag);
 }
