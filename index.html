@@ -342,8 +342,22 @@
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<style>
+  #appSplash{
+    position:fixed;inset:0;z-index:9999;
+    background:linear-gradient(180deg,#4C4C74 0%, #2E2E48 100%);
+    display:flex;align-items:center;justify-content:center;
+    transition:opacity 0.5s ease-out;
+  }
+  #appSplash.fade-out{opacity:0;pointer-events:none;}
+  #appSplash span{
+    font-family:'Baloo 2',sans-serif;font-weight:700;font-size:130px;color:#fff;
+    text-shadow:3px 6px 10px rgba(0,0,0,0.35);
+  }
+</style>
 </head>
 <body>
+<div id="appSplash"><span>K</span></div>
 <div class="wrap">
   <header class="top">
     <div>
@@ -2604,6 +2618,16 @@ function anyOverlayOpen(){
 })();
 
 initApp();
+
+window.addEventListener('load', ()=>{
+  setTimeout(()=>{
+    const splash = document.getElementById('appSplash');
+    if(splash){
+      splash.classList.add('fade-out');
+      setTimeout(()=>splash.remove(), 550);
+    }
+  }, 900);
+});
 </script>
 </body>
 </html>
