@@ -435,13 +435,6 @@
       <div id="customFieldsInputs"></div>
     </div>
     <div class="field">
-      <label>Typ</label>
-      <div class="toggle-row" id="typeToggle">
-        <div class="toggle-opt active" data-type="task" onclick="setType('task')">Uppgift</div>
-        <div class="toggle-opt" data-type="project" onclick="setType('project')">Projekt (checklista)</div>
-      </div>
-    </div>
-    <div class="field">
       <label>Förfallodatum</label>
       <input type="date" id="f-due">
     </div>
@@ -455,17 +448,9 @@
         <option value="yearly">Varje år</option>
       </select>
     </div>
-    <div class="field" id="notesFieldWrap">
+    <div class="field">
       <label>Anteckning</label>
       <textarea id="f-notes" placeholder="Vad behöver göras? T.ex. Klipp häcken framme och bak"></textarea>
-    </div>
-    <div class="field" id="subtasksFieldWrap" style="display:none;">
-      <label>Deluppgifter</label>
-      <div class="subtasks" id="formSubtasksList"></div>
-      <div class="add-subtask-row">
-        <input type="text" id="f-new-subtask" placeholder="Lägg till deluppgift..." onkeydown="if(event.key==='Enter'){event.preventDefault();addFormSubtask();}">
-        <button type="button" class="icon-btn" onclick="addFormSubtask()">+</button>
-      </div>
     </div>
     <div class="field">
       <label>Bilagor (bilder eller PDF)</label>
@@ -595,8 +580,6 @@ window.addEventListener('error', function(e){
 
 const STORAGE_KEY = 'household-tracker-data';
 let state = { items: [], categories: [], subcategories: [] };
-let currentType = 'task';
-let formSubtasks = [];
 let activeCategory = null;
 let activeSubcategory = null;
 let selectedSwatch = null;
@@ -1451,9 +1434,6 @@ function openModal(prefillCat){
   document.getElementById('f-notes').value='';
   stagedAttachments = [];
   renderAttachmentPreview();
-  formSubtasks = [];
-  renderFormSubtasks();
-  setType('task');
   document.getElementById('overlay').style.display='flex';
 }
 
@@ -1471,9 +1451,6 @@ function editItem(id){
   document.getElementById('f-notes').value=item.notes||'';
   stagedAttachments = item.attachments ? item.attachments.map(a=>({...a})) : [];
   renderAttachmentPreview();
-  formSubtasks = (item.type==='project' && Array.isArray(item.subtasks)) ? item.subtasks.map(s=>({...s})) : [];
-  renderFormSubtasks();
-  setType(item.type);
   document.getElementById('overlay').style.display='flex';
 }
 
@@ -1689,50 +1666,6 @@ function closeModal(){
   document.getElementById('overlay').style.display='none';
 }
 
-function setType(t){
-  currentType = t;
-  document.querySelectorAll('.toggle-opt').forEach(el=>{
-    el.classList.toggle('active', el.dataset.type===t);
-  });
-  document.getElementById('notesFieldWrap').style.display = t==='task' ? 'block' : 'none';
-  document.getElementById('subtasksFieldWrap').style.display = t==='project' ? 'block' : 'none';
-}
-
-function renderFormSubtasks(){
-  const wrap = document.getElementById('formSubtasksList');
-  wrap.innerHTML = '';
-  formSubtasks.forEach(s=>{
-    const row = document.createElement('div');
-    row.className = 'subtask';
-    row.innerHTML = `
-      <input type="checkbox" ${s.done?'checked':''} onchange="toggleFormSubtask('${s.id}')">
-      <label style="flex:1;">${escapeHtml(s.text)}</label>
-      <button type="button" class="icon-btn" onclick="removeFormSubtask('${s.id}')">✕</button>
-    `;
-    wrap.appendChild(row);
-  });
-}
-
-function addFormSubtask(){
-  const input = document.getElementById('f-new-subtask');
-  const text = input.value.trim();
-  if(!text) return;
-  formSubtasks.push({id:uid(), text, done:false});
-  input.value = '';
-  renderFormSubtasks();
-}
-
-function removeFormSubtask(id){
-  formSubtasks = formSubtasks.filter(s=>s.id!==id);
-  renderFormSubtasks();
-}
-
-function toggleFormSubtask(id){
-  const s = formSubtasks.find(s=>s.id===id);
-  if(s) s.done = !s.done;
-  renderFormSubtasks();
-}
-
 function saveItem(){
   const name = document.getElementById('f-name').value.trim();
   if(!name){ return; }
@@ -1751,15 +1684,12 @@ function saveItem(){
     subcategoryId: document.getElementById('f-subcategory').value || null,
     dueDate: document.getElementById('f-due').value || null,
     recurrence: document.getElementById('f-recurrence').value,
-    notes: currentType==='task' ? document.getElementById('f-notes').value.trim() : '',
+    notes: document.getElementById('f-notes').value.trim(),
     name,
-    type: currentType,
+    type: 'task',
     attachments: stagedAttachments,
     customValues
   };
-  if(currentType==='project'){
-    data.subtasks = formSubtasks.map(s=>({...s}));
-  }
   if(id){
     const item = state.items.find(i=>i.id===id);
     Object.assign(item, data);
@@ -1767,8 +1697,7 @@ function saveItem(){
     state.items.push({
       id: uid(),
       ...data,
-      completed:false,
-      subtasks: currentType==='project' ? data.subtasks : undefined
+      completed:false
     });
   }
   saveState();
