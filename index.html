@@ -556,6 +556,32 @@
 
 </div>
 
+<div class="overlay" id="photoImportOverlay" style="display:none;" onclick="if(event.target===this) closePhotoImport()">
+  <div class="modal" style="max-height:92vh;">
+    <div class="sheet-handle"></div>
+    <h3>Läs av schema från bild</h3>
+    <div id="photoImportStep1">
+      <p style="font-size:14px;color:var(--ink-muted);line-height:1.5;margin:0 0 14px;">Ta en bild på schemat, eller välj en du redan har. Appen försöker läsa av datum och tider automatiskt – du får godkänna innan något sparas.</p>
+      <div class="field">
+        <label>Bild</label>
+        <input type="file" id="photoImportInput" accept="image/*" capture="environment" onchange="handlePhotoImportSelect(event)">
+      </div>
+      <div id="photoImportLoading" style="display:none;text-align:center;padding:30px 0;color:var(--ink-muted);font-size:14px;">
+        <div style="font-size:32px;margin-bottom:10px;">🔎</div>
+        Läser av bilden, ett ögonblick...
+      </div>
+    </div>
+    <div id="photoImportStep2" style="display:none;">
+      <p style="font-size:13px;color:var(--ink-muted);line-height:1.5;margin:0 0 12px;">Kolla igenom raderna nedan – rätta till det som blev fel eller ta bort felaktiga rader innan du sparar.</p>
+      <div id="photoImportRows" style="display:flex;flex-direction:column;gap:10px;"></div>
+      <button type="button" class="cancel-btn" style="width:100%;margin-top:12px;" onclick="addPhotoImportRow()">+ Lägg till rad manuellt</button>
+    </div>
+    <div class="modal-actions" id="photoImportActions">
+      <button class="cancel-btn" onclick="closePhotoImport()">Avbryt</button>
+    </div>
+  </div>
+</div>
+
 <div class="overlay" id="calendarOverlay" style="display:none;" onclick="if(event.target===this) closeCalendar()">
   <div class="modal" style="max-height:92vh;">
     <div class="sheet-handle"></div>
@@ -1337,6 +1363,176 @@ function openShiftModalForCalendar(dateStr){
   openShiftModal(dateStr);
 }
 
+let photoImportCategory = null;
+let photoImportRows = [];
+let tesseractLoadPromise = null;
+
+function loadTesseractScript(){
+  if(window.Tesseract) return Promise.resolve();
+  if(tesseractLoadPromise) return tesseractLoadPromise;
+  tesseractLoadPromise = new Promise((resolve, reject)=>{
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
+    script.onload = resolve;
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+  return tesseractLoadPromise;
+}
+
+function openPhotoImport(catId){
+  photoImportCategory = catId;
+  photoImportRows = [];
+  document.getElementById('photoImportInput').value = '';
+  document.getElementById('photoImportStep1').style.display = 'block';
+  document.getElementById('photoImportStep2').style.display = 'none';
+  document.getElementById('photoImportLoading').style.display = 'none';
+  document.getElementById('photoImportActions').innerHTML = `
+    <button class="cancel-btn" onclick="closePhotoImport()">Avbryt</button>
+  `;
+  document.getElementById('photoImportOverlay').style.display = 'flex';
+}
+
+function closePhotoImport(){
+  document.getElementById('photoImportOverlay').style.display = 'none';
+}
+
+async function handlePhotoImportSelect(event){
+  const file = event.target.files[0];
+  if(!file) return;
+  document.getElementById('photoImportLoading').style.display = 'block';
+  try{
+    await loadTesseractScript();
+    const result = await Tesseract.recognize(file, 'swe+eng');
+    const text = result.data.text || '';
+    const rows = parseScheduleText(text);
+    photoImportRows = rows.length ? rows : [{date:'', start:'', end:''}];
+    showPhotoImportResults();
+  }catch(e){
+    console.error('OCR-fel', e);
+    alert('Kunde inte läsa av bilden. Prova en tydligare bild, eller lägg till raderna manuellt.');
+    photoImportRows = [{date:'', start:'', end:''}];
+    showPhotoImportResults();
+  }
+}
+
+function parseScheduleText(text){
+  const lines = text.split('\n').map(l=>l.trim()).filter(Boolean);
+  const monthMap = {jan:1,feb:2,mar:3,apr:4,maj:5,jun:6,jul:7,aug:8,sep:9,okt:10,nov:11,dec:12};
+  const currentYear = new Date().getFullYear();
+  const rows = [];
+  lines.forEach(line=>{
+    const timeMatch = line.match(/(\d{1,2})[:.]?(\d{2})?\s*[-–—]\s*(\d{1,2})[:.]?(\d{2})?/);
+    if(!timeMatch) return;
+    const startH = timeMatch[1].padStart(2,'0');
+    const startM = (timeMatch[2]||'00').padStart(2,'0');
+    const endH = timeMatch[3].padStart(2,'0');
+    const endM = (timeMatch[4]||'00').padStart(2,'0');
+    if(+startH>24 || +endH>24) return;
+    const start = `${startH}:${startM}`;
+    const end = `${endH}:${endM}`;
+
+    let dateStr = '';
+    const isoMatch = line.match(/(\d{4})-(\d{2})-(\d{2})/);
+    const monthNameMatch = line.match(/(\d{1,2})\s+(jan|feb|mar|apr|maj|jun|jul|aug|sep|okt|nov|dec)/i);
+    const dmMatch = line.match(/(\d{1,2})[\/.\-](\d{1,2})(?:[\/.\-](\d{2,4}))?/);
+    if(isoMatch){
+      dateStr = `${isoMatch[1]}-${isoMatch[2]}-${isoMatch[3]}`;
+    }else if(monthNameMatch){
+      const day = monthNameMatch[1].padStart(2,'0');
+      const month = String(monthMap[monthNameMatch[2].toLowerCase()]).padStart(2,'0');
+      dateStr = `${currentYear}-${month}-${day}`;
+    }else if(dmMatch){
+      const day = dmMatch[1].padStart(2,'0');
+      const month = dmMatch[2].padStart(2,'0');
+      const year = dmMatch[3] ? (dmMatch[3].length===2 ? '20'+dmMatch[3] : dmMatch[3]) : String(currentYear);
+      if(+month>=1 && +month<=12 && +day>=1 && +day<=31){
+        dateStr = `${year}-${month}-${day}`;
+      }
+    }
+    rows.push({date: dateStr, start, end});
+  });
+  return rows;
+}
+
+function showPhotoImportResults(){
+  document.getElementById('photoImportLoading').style.display = 'none';
+  document.getElementById('photoImportStep1').style.display = 'none';
+  document.getElementById('photoImportStep2').style.display = 'block';
+  document.getElementById('photoImportActions').innerHTML = `
+    <button class="cancel-btn" onclick="closePhotoImport()">Avbryt</button>
+    <button class="add-btn" onclick="savePhotoImportRows()">Spara alla</button>
+  `;
+  renderPhotoImportRows();
+}
+
+function renderPhotoImportRows(){
+  const wrap = document.getElementById('photoImportRows');
+  wrap.innerHTML = '';
+  photoImportRows.forEach((row, i)=>{
+    const rowEl = document.createElement('div');
+    rowEl.style.display = 'flex';
+    rowEl.style.gap = '6px';
+    rowEl.style.alignItems = 'center';
+    rowEl.innerHTML = `
+      <input type="date" value="${row.date||''}" style="flex:1.3;" onchange="updatePhotoImportRow(${i},'date',this.value)">
+      <input type="time" value="${row.start||''}" style="flex:1;" onchange="updatePhotoImportRow(${i},'start',this.value)">
+      <span style="color:var(--ink-muted);">–</span>
+      <input type="time" value="${row.end||''}" style="flex:1;" onchange="updatePhotoImportRow(${i},'end',this.value)">
+      <button type="button" class="icon-btn" onclick="removePhotoImportRow(${i})">✕</button>
+    `;
+    wrap.appendChild(rowEl);
+  });
+}
+
+function addPhotoImportRow(){
+  photoImportRows.push({date:'', start:'', end:''});
+  renderPhotoImportRows();
+}
+
+function removePhotoImportRow(i){
+  photoImportRows.splice(i,1);
+  renderPhotoImportRows();
+}
+
+function updatePhotoImportRow(i, field, value){
+  photoImportRows[i][field] = value;
+}
+
+function savePhotoImportRows(){
+  const subId = findScheduleSubcategory(photoImportCategory);
+  if(!subId){
+    alert('Hittar ingen schema-underkategori i den här kategorin.');
+    return;
+  }
+  let count = 0;
+  photoImportRows.forEach(row=>{
+    if(!row.date || !row.start || !row.end) return;
+    state.items.push({
+      id: uid(),
+      category: photoImportCategory,
+      subcategoryId: subId,
+      dueDate: row.date,
+      recurrence: 'none',
+      notes: '',
+      name: `${row.start}–${row.end}`,
+      type: 'task',
+      attachments: [],
+      customValues: {},
+      completed: false
+    });
+    count++;
+  });
+  if(count===0){
+    alert('Inga kompletta rader att spara – fyll i datum, start- och sluttid.');
+    return;
+  }
+  saveState();
+  closePhotoImport();
+  render();
+  refreshCalendarIfOpen();
+}
+
 function editShift(id){
   const item = state.items.find(i=>i.id===id);
   if(!item) return;
@@ -1814,11 +2010,25 @@ function renderSecondaryRibbons(){
     heading.textContent = cat.label;
     headRow.appendChild(heading);
 
+    const btnGroup = document.createElement('div');
+    btnGroup.style.display = 'flex';
+    btnGroup.style.gap = '6px';
+
     const calBtn = document.createElement('button');
     calBtn.className = 'cal-btn';
     calBtn.innerHTML = '📅 Kalender';
     calBtn.onclick = ()=>openCalendar(cat.id);
-    headRow.appendChild(calBtn);
+    btnGroup.appendChild(calBtn);
+
+    if(findScheduleSubcategory(cat.id)){
+      const photoBtn = document.createElement('button');
+      photoBtn.className = 'cal-btn';
+      photoBtn.innerHTML = '📷 Foto';
+      photoBtn.onclick = ()=>openPhotoImport(cat.id);
+      btnGroup.appendChild(photoBtn);
+    }
+
+    headRow.appendChild(btnGroup);
 
     section.appendChild(headRow);
 
@@ -2514,7 +2724,7 @@ setupSheetDrag('shiftOverlay', closeShiftModal);
 setupSheetDrag('confirmOverlay', closeConfirm);
 
 function anyOverlayOpen(){
-  return ['overlay','catOverlay','subcatOverlay','detailOverlay','calendarOverlay','shiftOverlay','confirmOverlay','householdCodeOverlay'].some(id=>{
+  return ['overlay','catOverlay','subcatOverlay','detailOverlay','calendarOverlay','shiftOverlay','confirmOverlay','householdCodeOverlay','photoImportOverlay'].some(id=>{
     const el = document.getElementById(id);
     return el && el.style.display === 'flex';
   });
