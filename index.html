@@ -48,8 +48,10 @@
     box-shadow:0 3px 8px rgba(62,62,92,0.25);
   }
   h1{
-    font-family:'Baloo 2',sans-serif;font-weight:700;font-size:26px;margin:0;
-    letter-spacing:0.2px;color:var(--ink);
+    font-family:'Baloo 2',sans-serif;font-weight:800;font-size:30px;margin:0;
+    letter-spacing:0.2px;
+    background:linear-gradient(135deg,#4C4C74 0%, #2E2E48 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
   }
   .date-line{
     font-family:'Nunito',sans-serif;font-weight:600;color:var(--ink-muted);
@@ -75,11 +77,12 @@
   .fab:active{transform:scale(0.96);}
 
   .nextup{margin-bottom:26px;}
-  .nextup h2{
+  .section-heading{
     font-family:'Baloo 2',sans-serif;font-size:13px;font-weight:700;
-    text-transform:uppercase;letter-spacing:1.2px;color:var(--ink-muted);
-    margin:0 0 10px 4px;
+    color:var(--ink-muted);margin:0 0 10px 2px;padding-bottom:8px;
+    border-bottom:1.5px solid var(--border);
   }
+  .work-heading{margin-top:22px;}
   .nextup-headrow{display:flex;align-items:center;justify-content:space-between;margin:0 4px 10px;}
   .nextup-headrow h2{margin:0;}
   .cal-btn{
@@ -160,6 +163,12 @@
     align-items:center;justify-content:center;color:var(--ink);font-size:15px;font-weight:700;
   }
   .cat-button-wrap{position:relative;}
+  .cat-dragging{
+    position:relative;z-index:60;transition:none !important;
+  }
+  .cat-dragging .cat-button{
+    box-shadow:0 12px 28px rgba(62,62,92,0.35);border-color:rgba(62,62,92,0.35);
+  }
   .cat-edit-btn{
     position:absolute;top:14px;right:16px;background:rgba(255,255,255,0.55);
     border:none;color:var(--ink);border-radius:50%;width:28px;height:28px;
@@ -356,7 +365,7 @@
   </header>
 
   <div class="nextup">
-    <h2>Kommande</h2>
+    <div class="section-heading">Kommande</div>
     <div class="ribbon" id="ribbon"></div>
   </div>
 
@@ -477,17 +486,6 @@
     <div class="field">
       <label>Färg</label>
       <div class="swatch-grid" id="swatchGrid"></div>
-    </div>
-    <div class="field">
-      <label>Egna fält (valfritt) – t.ex. reg.nummer, mätarställning</label>
-      <div id="customFieldsBuilder"></div>
-      <button type="button" class="mini-btn" onclick="addCustomFieldRow()">+ Lägg till fält</button>
-    </div>
-    <div class="field">
-      <label style="display:flex;align-items:center;gap:8px;">
-        <input type="checkbox" id="cat-exclude-nextup" style="width:auto;">
-        Visa inte poster härifrån i "Kommande"
-      </label>
     </div>
     <div class="modal-actions" id="catModalActions">
       <button class="cancel-btn" onclick="closeCatModal()">Avbryt</button>
@@ -728,6 +726,7 @@ function ensureDefaultsAndSeed(){
   }
   if(!state.items) state.items = [];
   if(!state.subcategories) state.subcategories = [];
+  state.categories.forEach((c,i)=>{ if(c.order===undefined) c.order = i; });
   seedHackData();
   seedJobSchedule();
   seedJobScheduleV2();
@@ -1700,11 +1699,8 @@ function openNewCategoryModal(){
   document.getElementById('editCatId').value='';
   document.getElementById('catModalTitle').textContent='Ny kategori';
   document.getElementById('cat-name').value='';
-  document.getElementById('cat-exclude-nextup').checked = false;
   selectedSwatch = SWATCHES[Math.floor(Math.random()*SWATCHES.length)];
   renderSwatches();
-  stagedCustomFields = [];
-  renderCustomFieldsBuilder();
   const actions = document.getElementById('catModalActions');
   actions.innerHTML = `
     <button class="cancel-btn" onclick="closeCatModal()">Avbryt</button>
@@ -1718,11 +1714,8 @@ function openEditCategoryModal(catId){
   document.getElementById('editCatId').value=catId;
   document.getElementById('catModalTitle').textContent='Redigera kategori';
   document.getElementById('cat-name').value=cat.label;
-  document.getElementById('cat-exclude-nextup').checked = !!cat.excludeFromNextUp;
   selectedSwatch = cat.color;
   renderSwatches();
-  stagedCustomFields = (cat.customFields || []).map(f=>({...f}));
-  renderCustomFieldsBuilder();
   const hasItems = state.items.some(i=>i.category===catId);
   const actions = document.getElementById('catModalActions');
   actions.innerHTML = `
@@ -1741,16 +1734,13 @@ function saveCategory(){
   const name = document.getElementById('cat-name').value.trim();
   if(!name){ return; }
   const editId = document.getElementById('editCatId').value;
-  const cleanFields = stagedCustomFields.filter(f=>f.label.trim()!=='');
-  const excludeFromNextUp = document.getElementById('cat-exclude-nextup').checked;
   if(editId){
     const cat = state.categories.find(c=>c.id===editId);
     cat.label = name;
     cat.color = selectedSwatch;
-    cat.customFields = cleanFields;
-    cat.excludeFromNextUp = excludeFromNextUp;
   }else{
-    state.categories.push({ id: uid(), label: name, color: selectedSwatch, customFields: cleanFields, excludeFromNextUp });
+    const maxOrder = state.categories.reduce((m,c)=>Math.max(m, c.order??0), -1);
+    state.categories.push({ id: uid(), label: name, color: selectedSwatch, customFields: [], excludeFromNextUp: false, order: maxOrder+1 });
   }
   saveState();
   closeCatModal();
@@ -2047,6 +2037,125 @@ function escapeHtml(s){
   return d.innerHTML;
 }
 
+let catDragState = null;
+
+function setupCategoryDragReorder(gridEl){
+  if(!gridEl) return;
+  const wraps = Array.from(gridEl.querySelectorAll('.cat-button-wrap'));
+  wraps.forEach(wrap=>{
+    let longPressTimer = null;
+    let startX = 0, startY = 0, moved = false, suppressClick = false;
+
+    const btn = wrap.querySelector('.cat-button');
+
+    const onTouchStart = (e)=>{
+      if(e.touches.length!==1) return;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      moved = false;
+      longPressTimer = setTimeout(()=>{
+        if(!moved) startCategoryDrag(wrap, gridEl, e.touches[0].clientY);
+      }, 450);
+    };
+    const onTouchMove = (e)=>{
+      const t = e.touches[0];
+      if(!catDragState || catDragState.wrap!==wrap){
+        if(Math.abs(t.clientX-startX)>10 || Math.abs(t.clientY-startY)>10){
+          moved = true;
+          clearTimeout(longPressTimer);
+        }
+        return;
+      }
+      e.preventDefault();
+      handleCategoryDragMove(t.clientY);
+    };
+    const onTouchEnd = ()=>{
+      clearTimeout(longPressTimer);
+      if(catDragState && catDragState.wrap===wrap){
+        finishCategoryDrag();
+        suppressClick = true;
+        setTimeout(()=>{ suppressClick = false; }, 300);
+      }
+    };
+
+    wrap.addEventListener('touchstart', onTouchStart, {passive:true});
+    wrap.addEventListener('touchmove', onTouchMove, {passive:false});
+    wrap.addEventListener('touchend', onTouchEnd);
+    wrap.addEventListener('touchcancel', onTouchEnd);
+
+    if(btn){
+      const originalOnClick = btn.onclick;
+      btn.onclick = (e)=>{
+        if(suppressClick){ e.preventDefault(); e.stopPropagation(); return; }
+        if(originalOnClick) originalOnClick(e);
+      };
+    }
+  });
+}
+
+function startCategoryDrag(wrap, gridEl, touchY){
+  const items = Array.from(gridEl.querySelectorAll('.cat-button-wrap'));
+  const rect = wrap.getBoundingClientRect();
+  const styleRow = getComputedStyle(gridEl);
+  const gap = parseFloat(styleRow.rowGap || styleRow.gap || '12') || 12;
+  catDragState = {
+    wrap, gridEl, items,
+    originalIndex: items.indexOf(wrap),
+    startTouchY: touchY,
+    itemHeight: rect.height + gap
+  };
+  wrap.classList.add('cat-dragging');
+  if(navigator.vibrate) navigator.vibrate(8);
+}
+
+function handleCategoryDragMove(touchY){
+  const ds = catDragState;
+  const dy = touchY - ds.startTouchY;
+  ds.wrap.style.transform = `translateY(${dy}px) scale(1.03)`;
+
+  const shift = Math.round(dy / ds.itemHeight);
+  let targetIndex = ds.originalIndex + shift;
+  targetIndex = Math.max(0, Math.min(ds.items.length-1, targetIndex));
+  ds.targetIndex = targetIndex;
+
+  ds.items.forEach((el, i)=>{
+    if(el===ds.wrap) return;
+    el.style.transition = 'transform 0.15s ease';
+    if(ds.originalIndex < targetIndex && i>ds.originalIndex && i<=targetIndex){
+      el.style.transform = `translateY(${-ds.itemHeight}px)`;
+    }else if(ds.originalIndex > targetIndex && i>=targetIndex && i<ds.originalIndex){
+      el.style.transform = `translateY(${ds.itemHeight}px)`;
+    }else{
+      el.style.transform = '';
+    }
+  });
+}
+
+function finishCategoryDrag(){
+  const ds = catDragState;
+  if(!ds) return;
+  const targetIndex = ds.targetIndex !== undefined ? ds.targetIndex : ds.originalIndex;
+
+  if(targetIndex !== ds.originalIndex){
+    const catIds = ds.items.map(el=>el.dataset.catId);
+    const movedId = catIds.splice(ds.originalIndex, 1)[0];
+    catIds.splice(targetIndex, 0, movedId);
+    catIds.forEach((id, i)=>{
+      const cat = state.categories.find(c=>c.id===id);
+      if(cat) cat.order = i;
+    });
+    saveState();
+  }
+
+  ds.items.forEach(el=>{
+    el.style.transition = '';
+    el.style.transform = '';
+    el.classList.remove('cat-dragging');
+  });
+  catDragState = null;
+  render();
+}
+
 function openCategory(catKey){
   activeCategory = catKey;
   activeSubcategory = null;
@@ -2114,6 +2223,7 @@ function renderBoard(){
 
       const wrap = document.createElement('div');
       wrap.className = 'cat-button-wrap';
+      wrap.dataset.catId = cat.id;
 
       const btn = document.createElement('button');
       btn.className = 'cat-button';
@@ -2138,16 +2248,12 @@ function renderBoard(){
       return wrap;
     }
 
-    const normalCats = state.categories.filter(c=>!c.excludeFromNextUp);
-    const separateCats = state.categories.filter(c=>c.excludeFromNextUp);
+    const normalCats = state.categories.filter(c=>!c.excludeFromNextUp).sort((a,b)=>(a.order??0)-(b.order??0));
+    const separateCats = state.categories.filter(c=>c.excludeFromNextUp).sort((a,b)=>(a.order??0)-(b.order??0));
 
     if(normalCats.length){
       const privateHeading = document.createElement('div');
-      privateHeading.style.fontFamily = "'Baloo 2', sans-serif";
-      privateHeading.style.fontWeight = '700';
-      privateHeading.style.fontSize = '13px';
-      privateHeading.style.color = 'var(--ink-muted)';
-      privateHeading.style.margin = '4px 2px 8px';
+      privateHeading.className = 'section-heading';
       privateHeading.textContent = 'Privat';
       frag.appendChild(privateHeading);
     }
@@ -2166,11 +2272,7 @@ function renderBoard(){
 
     if(separateCats.length){
       const heading = document.createElement('div');
-      heading.style.fontFamily = "'Baloo 2', sans-serif";
-      heading.style.fontWeight = '700';
-      heading.style.fontSize = '13px';
-      heading.style.color = 'var(--ink-muted)';
-      heading.style.margin = '22px 2px 8px';
+      heading.className = 'section-heading work-heading';
       heading.textContent = 'Arbete';
       frag.appendChild(heading);
 
@@ -2181,6 +2283,10 @@ function renderBoard(){
     }
 
     board.appendChild(frag);
+    setupCategoryDragReorder(grid);
+    if(separateCats.length){
+      setupCategoryDragReorder(board.querySelectorAll('.cat-buttons')[1]);
+    }
     return;
   }
 
