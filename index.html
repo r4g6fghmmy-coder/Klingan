@@ -1392,6 +1392,18 @@ function openPhotoImport(catId){
   document.getElementById('photoImportOverlay').style.display = 'flex';
 }
 
+function setPhotoImportStatus(text){
+  const el = document.getElementById('photoImportLoading');
+  if(el) el.innerHTML = `<div style="font-size:32px;margin-bottom:10px;">🔎</div>${text}`;
+}
+
+function withTimeout(promise, ms, label){
+  return Promise.race([
+    promise,
+    new Promise((_, reject)=> setTimeout(()=>reject(new Error('timeout:'+label)), ms))
+  ]);
+}
+
 function closePhotoImport(){
   document.getElementById('photoImportOverlay').style.display = 'none';
 }
@@ -1400,16 +1412,34 @@ async function handlePhotoImportSelect(event){
   const file = event.target.files[0];
   if(!file) return;
   document.getElementById('photoImportLoading').style.display = 'block';
+  setPhotoImportStatus('Förbereder bildläsning...');
+  let worker = null;
   try{
-    await loadTesseractScript();
-    const result = await Tesseract.recognize(file, 'swe+eng');
-    const text = result.data.text || '';
+    await withTimeout(loadTesseractScript(), 20000, 'script-load');
+    setPhotoImportStatus('Laddar ner språkdata (kan ta en stund första gången)...');
+    worker = await withTimeout(Tesseract.createWorker('swe', 1, {
+      logger: m=>{
+        if(m.status && typeof m.progress === 'number'){
+          const pct = Math.round(m.progress*100);
+          const label = m.status === 'recognizing text' ? 'Läser av text' :
+                        m.status.includes('loading') ? 'Laddar' :
+                        m.status.includes('initializ') ? 'Förbereder' : m.status;
+          setPhotoImportStatus(`${label}... ${pct}%`);
+        }
+      }
+    }), 60000, 'worker-init');
+    setPhotoImportStatus('Läser av bilden...');
+    const result = await withTimeout(worker.recognize(file), 60000, 'recognize');
+    await worker.terminate();
+    worker = null;
+    const text = (result.data && result.data.text) || '';
     const rows = parseScheduleText(text);
     photoImportRows = rows.length ? rows : [{date:'', start:'', end:''}];
     showPhotoImportResults();
   }catch(e){
     console.error('OCR-fel', e);
-    alert('Kunde inte läsa av bilden. Prova en tydligare bild, eller lägg till raderna manuellt.');
+    if(worker){ try{ await worker.terminate(); }catch(e2){} }
+    alert('Kunde inte läsa av bilden (tog för lång tid eller misslyckades). Prova en tydligare bild, säkerställ att du har internetuppkoppling, eller lägg till raderna manuellt.');
     photoImportRows = [{date:'', start:'', end:''}];
     showPhotoImportResults();
   }
