@@ -562,7 +562,12 @@
       <p style="font-size:14px;color:var(--ink-muted);line-height:1.5;margin:0 0 14px;">Ta en bild på schemat, eller välj en du redan har. Appen försöker läsa av datum och tider automatiskt – du får godkänna innan något sparas.</p>
       <div class="field">
         <label>Bild</label>
-        <input type="file" id="photoImportInput" accept="image/*" onchange="handlePhotoImportSelect(event)">
+        <div style="display:flex;gap:10px;">
+          <button type="button" class="cancel-btn" style="flex:1;" onclick="document.getElementById('photoImportCamera').click()">📷 Ta bild</button>
+          <button type="button" class="cancel-btn" style="flex:1;" onclick="document.getElementById('photoImportLibrary').click()">🖼️ Välj bild</button>
+        </div>
+        <input type="file" id="photoImportCamera" accept="image/*" capture="environment" style="display:none;" onchange="handlePhotoImportSelect(event)">
+        <input type="file" id="photoImportLibrary" accept="image/*" style="display:none;" onchange="handlePhotoImportSelect(event)">
       </div>
       <div id="photoImportLoading" style="display:none;text-align:center;padding:30px 0;color:var(--ink-muted);font-size:14px;">
         <div style="font-size:32px;margin-bottom:10px;">🔎</div>
@@ -1387,7 +1392,8 @@ function loadTesseractScript(){
 function openPhotoImport(catId){
   photoImportCategory = catId;
   photoImportRows = [];
-  document.getElementById('photoImportInput').value = '';
+  document.getElementById('photoImportCamera').value = '';
+  document.getElementById('photoImportLibrary').value = '';
   document.getElementById('photoImportStep1').style.display = 'block';
   document.getElementById('photoImportStep2').style.display = 'none';
   document.getElementById('photoImportLoading').style.display = 'none';
