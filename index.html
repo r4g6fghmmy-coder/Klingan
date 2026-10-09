@@ -562,7 +562,7 @@
       <p style="font-size:14px;color:var(--ink-muted);line-height:1.5;margin:0 0 14px;">Ta en bild på schemat, eller välj en du redan har. Appen försöker läsa av datum och tider automatiskt – du får godkänna innan något sparas.</p>
       <div class="field">
         <label>Bild</label>
-        <input type="file" id="photoImportInput" accept="image/*" capture="environment" onchange="handlePhotoImportSelect(event)">
+        <input type="file" id="photoImportInput" accept="image/*" onchange="handlePhotoImportSelect(event)">
       </div>
       <div id="photoImportLoading" style="display:none;text-align:center;padding:30px 0;color:var(--ink-muted);font-size:14px;">
         <div style="font-size:32px;margin-bottom:10px;">🔎</div>
@@ -573,6 +573,10 @@
       <p style="font-size:13px;color:var(--ink-muted);line-height:1.5;margin:0 0 12px;">Kolla igenom raderna nedan – rätta till det som blev fel eller ta bort felaktiga rader innan du sparar.</p>
       <div id="photoImportRows" style="display:flex;flex-direction:column;gap:10px;"></div>
       <button type="button" class="cancel-btn" style="width:100%;margin-top:12px;" onclick="addPhotoImportRow()">+ Lägg till rad manuellt</button>
+      <details style="margin-top:16px;">
+        <summary style="font-size:12px;color:var(--ink-muted);cursor:pointer;">Visa rå avläst text (för felsökning)</summary>
+        <pre id="photoImportRawText" style="font-size:11px;white-space:pre-wrap;background:var(--surface-soft);border-radius:10px;padding:10px;margin-top:8px;max-height:150px;overflow-y:auto;"></pre>
+      </details>
     </div>
     <div class="modal-actions" id="photoImportActions">
       <button class="cancel-btn" onclick="closePhotoImport()">Avbryt</button>
@@ -1363,6 +1367,7 @@ function openShiftModalForCalendar(dateStr){
 }
 
 let photoImportCategory = null;
+let lastOcrRawText = '';
 let photoImportRows = [];
 let tesseractLoadPromise = null;
 
@@ -1433,12 +1438,14 @@ async function handlePhotoImportSelect(event){
     await worker.terminate();
     worker = null;
     const text = (result.data && result.data.text) || '';
+    lastOcrRawText = text;
     const rows = parseScheduleText(text);
     photoImportRows = rows.length ? rows : [{date:'', start:'', end:''}];
     showPhotoImportResults();
   }catch(e){
     console.error('OCR-fel', e);
     if(worker){ try{ await worker.terminate(); }catch(e2){} }
+    lastOcrRawText = '(misslyckades: ' + e.message + ')';
     alert('Kunde inte läsa av bilden (tog för lång tid eller misslyckades). Prova en tydligare bild, säkerställ att du har internetuppkoppling, eller lägg till raderna manuellt.');
     photoImportRows = [{date:'', start:'', end:''}];
     showPhotoImportResults();
@@ -1451,6 +1458,34 @@ function parseScheduleText(text){
   const currentYear = new Date().getFullYear();
   const rows = [];
   lines.forEach(line=>{
+    // Skip lines marked as a day off (F / SF with no shift codes) to avoid false matches
+    if(/\b(SPANNIGS|CIVINGPO)\b/.test(line) === false && /\bS?F\b/.test(line) && !/\d{3,4}\D+\d{3,4}/.test(line)){
+      return;
+    }
+
+    // Format A: tabular work schedule export — date as YYYYMMDD, times as bare HHMM (e.g. "20261017 42 Lö CIVINGPO 1130 2200")
+    const tabularDateMatch = line.match(/\b(20\d{2})(\d{2})(\d{2})\b/);
+    if(tabularDateMatch){
+      const month = tabularDateMatch[2], day = tabularDateMatch[3];
+      if(+month>=1 && +month<=12 && +day>=1 && +day<=31){
+        const afterDate = line.slice(line.indexOf(tabularDateMatch[0]) + tabularDateMatch[0].length);
+        const timeNums = afterDate.match(/\b([01]\d|2[0-4]):?([0-5]\d)\b/g);
+        if(timeNums && timeNums.length>=2){
+          const toHM = (s)=>{
+            const clean = s.replace(':','');
+            return clean.slice(0,2) + ':' + clean.slice(2,4);
+          };
+          rows.push({
+            date: `${tabularDateMatch[1]}-${month}-${day}`,
+            start: toHM(timeNums[0]),
+            end: toHM(timeNums[1])
+          });
+          return;
+        }
+      }
+    }
+
+    // Format B: free text with "HH:MM-HH:MM" style time range and a nearby date
     const timeMatch = line.match(/(\d{1,2})[:.]?(\d{2})?\s*[-–—]\s*(\d{1,2})[:.]?(\d{2})?/);
     if(!timeMatch) return;
     const startH = timeMatch[1].padStart(2,'0');
@@ -1492,6 +1527,8 @@ function showPhotoImportResults(){
     <button class="cancel-btn" onclick="closePhotoImport()">Avbryt</button>
     <button class="add-btn" onclick="savePhotoImportRows()">Spara alla</button>
   `;
+  const rawEl = document.getElementById('photoImportRawText');
+  if(rawEl) rawEl.textContent = lastOcrRawText || '(ingen text hittades)';
   renderPhotoImportRows();
 }
 
